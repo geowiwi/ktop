@@ -1,0 +1,36 @@
+<resources>
+  <!-- Colors used by the Ki2 views/layouts, values taken from Ki2
+       (https://github.com/valterc/ki2, MIT License, see LICENSE-ki2.txt) -->
+  <color name="black">#FF000000</color>
+  <color name="white">#FFFFFFFF</color>
+  <color name="white_100">#FFFAFAFA</color>
+  <color name="hh_black">#1b2d2d</color>
+  <color name="hh_grey">#a0b4be</color>
+  <color name="hh_light_grey">#879090</color>
+  <color name="hh_red">#c84e35</color>
+  <color name="hh_red_600">#d34343</color>
+  <color name="hh_yellow">#F8E400</color>
+  <color name="hh_yellow_darker">#baa900</color>
+  <color name="hh_green">#209f13</color>
+  <color name="hh_success_green_600">#0dba75</color>
+  <color name="hh_gears_active_dark">#a0b4be</color>
+  <color name="hh_gears_active_light">#617f8f</color>
+  <color name="hh_gears_border_dark">#F0F0F0</color>
+  <color name="hh_gears_border_light">#707070</color>
+  <color name="hh_divider_color">#dddddd</color>
+  <color name="battery_background_dark">#70E0E0E0</color>
+  <color name="battery_border_dark">#FFD0D0D0</color>
+  <!-- Ki2 app-screen colors -->
+  <color name="hh_yellow_dark">#cbba00</color>
+  <color name="hh_light_blue_dark">#7A9FAF</color>
+  <color name="hh_light_blue">#93ABB6</color>
+  <color name="hh_dark_blue">#214559</color>
+  <color name="grey">#777777</color>
+  <color name="grey_100">#F0F0F0</color>
+  <color name="hh_faded_gray">#898989</color>
+  <color name="red_faded">#E85959</color>
+  <!-- ktop palette (replaces Ki2's Hammerhead yellow): dark slate + green accent -->
+  <color name="ktop_primary">#214559</color>
+  <color name="ktop_primary_dark">#17323F</color>
+  <color name="ktop_accent">#0DBA75</color>
+</resources>

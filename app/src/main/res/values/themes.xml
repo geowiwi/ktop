@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App theme structure = Ki2's (https://github.com/valterc/ki2, MIT License, see LICENSE-ki2.txt) -->
+<resources>
+
+    <style name="Theme.Ktop.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/ktop_primary</item>
+        <item name="colorPrimaryVariant">@color/ktop_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/ktop_accent</item>
+        <item name="colorSecondaryVariant">@color/ktop_primary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:textColorPrimary">@color/hh_black</item>
+        <item name="android:textColorSecondary">@color/hh_faded_gray</item>
+        <item name="dialogPreferenceStyle">@style/Theme.Ktop.Preference.Dialog</item>
+    </style>
+
+    <!-- detail screens: same palette (kept as separate style for the manifest) -->
+    <style name="Theme.Ktop.NoActionBar.Blue" parent="Theme.Ktop.NoActionBar" />
+
+    <style name="Theme.Ktop.Preference.Dialog" parent="Preference.Material">
+        <item name="positiveButtonText">@string/text_ok</item>
+        <item name="negativeButtonText">@string/text_cancel</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlayLeftSide" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeTopRight">25dp</item>
+        <item name="cornerSizeBottomRight">25dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlayRightSide" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeBottomLeft">25dp</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+</resources>

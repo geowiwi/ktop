@@ -1,0 +1,37 @@
+# Build output
+build/
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Gradle / Kotlin caches
+.gradle/
+.kotlin/
+
+# Local configuration (SDK path, signing passwords, tokens) - never commit
+local.properties
+
+# Signing keys - never commit
+*.jks
+*.keystore
+release-application-key
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# JVM heap dumps (Gradle OutOfMemory) - can be hundreds of MB
+*.hprof
+
+# macOS
+.DS_Store
+
+# Third-party protocol reference (eds-ox, contains other people's code/APKs;
+# linked in README instead of redistributed)
+eds-ox-main.zip

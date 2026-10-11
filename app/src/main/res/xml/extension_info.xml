@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Field set = Ki2's (https://github.com/valterc/ki2, MIT License,
+  karoo_extension_info.xml): same names, descriptions and graphical flags.
+  rear_gear / shift_count keep their existing ktop typeIds (they are Ki2's
+  "Rear Gear" / "Shift Count" and are already placed in ride profiles).
+  Not ported: Ki2 "Shifting Mode" (Di2 synchro mode, no Wheeltop equivalent).
+  Kept from ktop (not in Ki2): the four battery-voltage fields.
+-->
+<ExtensionInfo
+    displayName="Wheeltop (EDS)"
+    icon="@mipmap/ic_launcher"
+    id="wheeltop"
+    scansDevices="true">
+
+    <!-- ===== Ki2 fields ===== -->
+    <DataType
+        description="Shifting battery %."
+        displayName="Shifting Battery %"
+        icon="@drawable/ic_battery"
+        typeId="DATATYPE_SHIFTING_BATTERY_PERCENTAGE" />
+
+    <DataType
+        description="Gear ratio."
+        displayName="Gear Ratio"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_GEAR_RATIO" />
+
+    <DataType
+        description="View with gears index."
+        displayName="Gears"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_GEARS_INDEX" />
+
+    <DataType
+        description="View with gears size (teeth count)."
+        displayName="Gears T"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_GEARS_SIZE" />
+
+    <DataType
+        description="View with front gear index."
+        displayName="Front Gear"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_FRONT_GEAR_INDEX" />
+
+    <DataType
+        description="View with front gear size (teeth count)."
+        displayName="Front Gear T"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_FRONT_GEAR_SIZE" />
+
+    <DataType
+        description="View with rear gear index."
+        displayName="Rear Gear"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="rear_gear" />
+
+    <DataType
+        description="View with rear gear size (teeth count)."
+        displayName="Rear Gear T"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_REAR_GEAR_SIZE" />
+
+    <DataType
+        description="View with total shift count."
+        displayName="Shift Count"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="shift_count" />
+
+    <DataType
+        description="View with front shift count."
+        displayName="F Shift Count"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_FRONT_SHIFT_COUNT" />
+
+    <DataType
+        description="View with rear shift count."
+        displayName="R Shift Count"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_REAR_SHIFT_COUNT" />
+
+    <DataType
+        description="Gears visual view with gear index."
+        displayName="Gears Index (visual)"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_VISUAL_GEARS_INDEX" />
+
+    <DataType
+        description="Gears visual view with gear size (teeth count)."
+        displayName="Gears Size (visual)"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_VISUAL_GEARS_SIZE" />
+
+    <DataType
+        description="Gears visual view with battery percentage, gear index and size (teeth count)."
+        displayName="Gears Detailed (visual)"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_VISUAL_GEARS_DETAILED" />
+
+    <DataType
+        description="Drivetrain visual view with gear index."
+        displayName="Drivetrain Index (visual)"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_VISUAL_DRIVETRAIN_INDEX" />
+
+    <DataType
+        description="Drivetrain visual view with gear size (teeth count)."
+        displayName="Drivetrain Size (visual)"
+        graphical="true"
+        icon="@drawable/ic_gear"
+        typeId="DATATYPE_VISUAL_DRIVETRAIN_SIZE" />
+
+    <DataType
+        description="Visual bike battery view with shifting battery percentage."
+        displayName="Bike Battery (visual)"
+        graphical="true"
+        icon="@drawable/ic_battery"
+        typeId="DATATYPE_VISUAL_BIKE_BATTERY" />
+
+    <!-- ===== ktop battery voltages (not in Ki2) ===== -->
+    <DataType
+        description="Rear derailleur battery voltage"
+        displayName="RD Batt V"
+        graphical="true"
+        icon="@drawable/ic_battery"
+        typeId="rear_batt_v" />
+    <DataType
+        description="Left shifter battery voltage"
+        displayName="L Shifter Batt V"
+        graphical="true"
+        icon="@drawable/ic_battery"
+        typeId="left_batt_v" />
+    <DataType
+        description="Right shifter battery voltage"
+        displayName="R Shifter Batt V"
+        graphical="true"
+        icon="@drawable/ic_battery"
+        typeId="right_batt_v" />
+    <DataType
+        description="Front derailleur battery voltage"
+        displayName="FD Batt V"
+        graphical="true"
+        icon="@drawable/ic_battery"
+        typeId="front_batt_v" />
+</ExtensionInfo>

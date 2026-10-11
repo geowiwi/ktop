@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Minimal RemoteViews host for the bitmap-rendered graphical fields
+     (KtopRenderedVisualType, the Ki2 visual fields). Ported from
+     the real KI2 app's own R.layout.remote_view_image pattern
+     (~/Documents/ki2, "übernimm das aus ki2") - a GearsView/BatteryView
+     is measured/laid out/drawn into a Bitmap off-screen, and that
+     Bitmap is shown here via a single full-size ImageView, since
+     karoo-ext's RemoteViews-based field rendering can't host an
+     arbitrary custom View directly.
+-->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/imageView_remote"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="fitCenter" />

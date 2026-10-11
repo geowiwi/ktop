@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- From Ki2 (https://github.com/valterc/ki2), MIT License, see LICENSE-ki2.txt -->
+<resources>
+
+    <attr name="textEnabled" format="boolean" />
+
+    <attr name="drivetrainColor" format="color" />
+    <attr name="gearColor" format="color" />
+    <attr name="selectedGearColor" format="color" />
+    <attr name="foregroundColor" format="color" />
+    <attr name="backgroundColor" format="color" />
+
+    <attr name="value" format="float" />
+
+    <attr name="frontGearMax" format="integer" />
+    <attr name="rearGearMax" format="integer" />
+    <attr name="frontGear" format="integer" />
+    <attr name="rearGear" format="integer" />
+
+    <attr name="frontGearLabel" format="string" />
+    <attr name="rearGearLabel" format="string" />
+
+    <declare-styleable name="DrivetrainView">
+        <attr name="android:textSize" format="dimension" />
+        <attr name="android:textColor" format="color" />
+        <attr name="textEnabled" />
+
+        <attr name="drivetrainColor" />
+        <attr name="selectedGearColor" />
+        <attr name="chainColor" format="color" />
+
+        <attr name="drivetrainStrokeWidth" format="dimension" />
+        <attr name="selectedGearStrokeWidth" format="dimension" />
+        <attr name="chainStrokeWidth" format="dimension" />
+
+        <attr name="frontGearMax" />
+        <attr name="rearGearMax" />
+        <attr name="frontGear" />
+        <attr name="rearGear" />
+
+        <attr name="frontGearLabel" />
+        <attr name="rearGearLabel" />
+    </declare-styleable>
+
+    <declare-styleable name="GearsView">
+        <attr name="android:textSize" format="dimension" />
+        <attr name="android:textColor" format="color" />
+        <attr name="textEnabled" />
+
+        <attr name="selectedGearColor" />
+        <attr name="unselectedGearBorderColor" format="color" />
+
+        <attr name="frontGearMax" />
+        <attr name="rearGearMax" />
+        <attr name="frontGear" />
+        <attr name="rearGear" />
+
+        <attr name="frontGearLabel" />
+        <attr name="rearGearLabel" />
+    </declare-styleable>
+
+    <declare-styleable name="BatteryView">
+        <attr name="borderStrokeWidth" format="float" />
+        <attr name="borderColor" format="color" />
+        <attr name="backgroundColor" />
+        <attr name="foregroundColor" />
+        <attr name="value" />
+        <attr name="orientation" format="enum">
+            <enum name="horizontal_left" value="0" />
+            <enum name="horizontal_right" value="1" />
+            <enum name="vertical_top" value="2" />
+            <enum name="vertical_bottom" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="FillView">
+        <attr name="foregroundColor" />
+        <attr name="value" />
+    </declare-styleable>
+
+</resources>

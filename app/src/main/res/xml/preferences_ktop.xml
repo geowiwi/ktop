@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="@string/text_battery"
+        app:summary="@string/text_battery_settings_summary"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="battery_level_low"
+            app:title="@string/text_battery_level_low"
+            app:entries="@array/battery_level_entries"
+            app:entryValues="@array/battery_level_values"
+            app:defaultValue="20"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_battery_2" />
+
+        <ListPreference
+            app:key="battery_level_critical"
+            app:title="@string/text_battery_level_critical"
+            app:entries="@array/battery_level_entries"
+            app:entryValues="@array/battery_level_values"
+            app:defaultValue="10"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_battery_0" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/text_about"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            app:key="about"
+            app:title="@string/app_name"
+            app:summary="@string/text_about_summary"
+            app:selectable="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
