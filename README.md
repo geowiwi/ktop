@@ -12,6 +12,17 @@ Inspired by and partly based on [Ki2](https://github.com/valterc/ki2) by
 Valter C. (MIT License) — the data fields, graphical views and app layout
 follow Ki2 as closely as possible.
 
+## Screenshots
+
+| Ride page: KI2-style data fields | App: device details |
+|:---:|:---:|
+| <img src="docs/media/ride-fields.gif" width="300" alt="ktop data fields on a Karoo ride page while shifting"> | <img src="docs/media/app-device-details.gif" width="300" alt="ktop app showing device details, race and sleep mode"> |
+| [video (mp4)](docs/media/ride-fields.mp4) | [video (mp4)](docs/media/app-device-details.mp4) |
+
+| Data fields | App settings |
+|:---:|:---:|
+| <img src="docs/media/ride-fields.png" width="300" alt="Gears, Shifting Battery, Shift Count, Gear Ratio, Drivetrain and Gears Detailed fields"> | <img src="docs/media/app-settings.png" width="300" alt="ktop app settings tab"> |
+
 ## Features
 
 - Connects to the Wheeltop EDS rear derailleur over Bluetooth LE and keeps

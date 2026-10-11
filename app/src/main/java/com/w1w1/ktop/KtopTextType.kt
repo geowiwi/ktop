@@ -1,6 +1,8 @@
 package com.w1w1.ktop
 
 import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import androidx.compose.ui.graphics.Color
@@ -59,8 +61,10 @@ class KtopTextType(
     companion object {
         private const val TAG = "ktop-ble"
         private const val MIN_UPDATE_MS = 1050L
-        private val END_PAD = 2.dp
-        private val BOTTOM_PAD = (-18).dp
+        private const val END_PAD_DP = 2f
+        private const val BOTTOM_PAD_DP = -18f
+        /** Horizontal room kept free next to the text (header icon side, rounding). */
+        private const val SIDE_MARGIN_DP = 10f
 
         @OptIn(ExperimentalGlanceRemoteViewsApi::class)
         private val glance = GlanceRemoteViews()
@@ -118,7 +122,23 @@ class KtopTextType(
             return value(state) ?: context.getString(R.string.text_na)
         }
 
+        // Longer Ki2 values ("01-03", "40-21", "N/A") don't fit a half-width
+        // field at the confirmed 0.92x size (on-device: "01-03" was cut to
+        // "01-0"). Shrink the font just enough to fit the field width, and
+        // scale the (font-size dependent) negative bottom padding with it so
+        // the baseline stays where the confirmed geometry puts it.
+        val dm = context.resources.displayMetrics
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = Typeface.SANS_SERIF }
+        fun fittedSp(txt: String): Float {
+            val availablePx = config.viewSize.first - (END_PAD_DP + SIDE_MARGIN_DP) * dm.density
+            paint.textSize = sizeSp * dm.scaledDensity
+            val w = paint.measureText(txt)
+            return if (w <= 0f || w <= availablePx) sizeSp else sizeSp * (availablePx / w) * 0.97f
+        }
+
         suspend fun renderNow(txt: String) {
+            val sp = fittedSp(txt)
+            val bottomPad = (BOTTOM_PAD_DP * (sp / sizeSp)).dp
             val result = glance.compose(
                 context = context,
                 size = DpSize.Unspecified,
@@ -127,12 +147,12 @@ class KtopTextType(
             ) {
                 Box(
                     modifier = GlanceModifier.fillMaxSize()
-                        .padding(end = END_PAD, bottom = BOTTOM_PAD),
+                        .padding(end = END_PAD_DP.dp, bottom = bottomPad),
                     contentAlignment = boxAlign
                 ) {
                     Text(
                         text = txt, style = TextStyle(
-                            fontSize = sizeSp.sp,
+                            fontSize = sp.sp,
                             textAlign = textAlign,
                             fontFamily = FontFamily.SansSerif,
                             color = ColorProvider(Color.White, Color.White)
