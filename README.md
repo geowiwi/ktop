@@ -72,38 +72,12 @@ Gears T, Gear Ratio and the "Size" views.
 
 ## Battery and runtime
 
-Rough numbers to plan with; none of them are measured by ktop itself.
-
-| | Figure | Source |
-|---|---|---|
-| RD battery | about 800 mAh, USB-C | [BikeRadar](https://www.bikeradar.com/advice/buyers-guides/wheeltop-buyers-guide) (EDS TX / OX2) |
-| Manufacturer claim | up to 20,000 shifts per charge | BikeRadar (EDS TX) |
-| Rider report | about 20 % in a 4 h ride at 400–500 shifts/h, i.e. roughly 20 h per charge | [TrainerRoad forum](https://www.trainerroad.com/forum/t/wheeltop-eds-tx-1000-mile-review-updated-3k-mile-thoughts/103636) |
-
-Rule of thumb: runtime ≈ shifts per charge ÷ your shifts per hour. With
-the rider report above (about 9,000 shifts per charge) that is about 45 h
-at 200 shifts/h and about 20 h at 450 shifts/h. The manufacturer claim
-would roughly double that.
-
-What changes the consumption:
-
-- **ktop keeps the RD awake while it is connected.** The RD never sleeps
-  while an app is connected (it normally sleeps 3 min after the last
-  shift). While riding this makes no difference; on long stops with the
-  Karoo still connected, the RD stays awake. ktop reads the batteries
-  every 30 s.
-- **Race mode** shifts faster and drains the RD battery faster.
-- **Sleep mode off** keeps the RD awake when idle and drains it faster.
-- A front derailleur (EDS TX) has its own battery.
-
-How ktop shows battery levels: the RD/FD percentage is a straight line
-between 6.6 V (0 %) and 8.2 V (100 %), the shifter coin cells between
-2.0 V and 3.2 V. These are estimates, not a fuel gauge; use the voltage
-fields if you want the raw values.
-
-Measure your own runtime: note **Shifting Battery %** and **Shift Count**
-at the start and end of a ride; % used per shift tells you how many
-shifts a full charge gives you.
+- RD battery about 800 mAh; roughly 10,000–20,000 shifts per charge
+- Runtime ≈ shifts per charge ÷ your shifts per hour (about 20–45 h)
+- ktop keeps the RD awake while connected; batteries read every 30 s
+- Race mode and sleep mode off use more energy
+- Battery % is estimated from voltage (RD/FD 6.6–8.2 V, shifters 2.0–3.2 V)
+- Measure your own: Shifting Battery % and Shift Count at start and end of a ride
 
 ## Known limitations
 
@@ -124,68 +98,12 @@ shifts a full charge gives you.
 
 ## Roadmap / ideas
 
-Not implemented yet, collected here for later.
-
-### Fine-tuning from the Karoo
-
-The Wheeltop web app adjusts the derailleur over the same Bluetooth
-protocol ktop already uses, so fine-tuning could be done directly on the
-Karoo, without a phone or Web Bluetooth. Known commands (from the
-[eds-ox](https://git.jeckyll.net/published/personal/eds-ox) protocol notes
-and reference app):
-
-| Command | Purpose | Payload |
-|---|---|---|
-| `0x99` rearLifting | shift the RD one gear up / down (test shift) | `01` / `02` |
-| `0x95` fineTuneGear | micro adjustment, probably like the shifter's "T" position (~0.2 mm) | `01` down / `02` up |
-| `0x92` setGearUpValue | set the position of one cog (`H_GEA[1..n]` in the info dump) | gear, 16-bit value |
-| `0x91` setTotalGear | number of cogs | n |
-| `0x89` / `0x85` / `0x82` | front derailleur: shift, micro adjustment, limits (EDS TX / 2x) | as above |
-
-Planned screen: device details → **Fine-tuning**, modelled on the
-official app: current gear with gear up/down, micro +/−, and a list of all
-cogs with their position value (−, +, Set).
-
-Safety rules for this feature:
-
-- Only with the bike in a stand, turning the cranks by hand; disabled
-  while a ride is recording (ktop can read the Karoo ride state).
-- Wrong cog values can move the RD into the spokes: back up the current
-  values before any change, small steps only, confirmation before Set,
-  "restore previous values".
-- Unclear: whether micro adjustments (`0x95`) are stored permanently, and
-  the RD answers `setGearUpValue` with "ok" regardless; ktop would re-read
-  the values after every change.
-
-Suggested order: 1) test shifts, micro +/− and read-only cog values;
-2) editing cog values with backup and restore.
-
-### Shifter buttons as Karoo buttons
-
-karoo-ext can trigger the Karoo's hardware buttons (e.g. next page). The
-missing piece is a signal: the shifters only talk to the RD, and the RD
-reports gear changes, not button presses. ktop logs all raw frames under
-the `ktop-raw` tag to look for a usable pattern (pressing past the last
-cog, holding a button, the fine-tune "T" position). Another idea for 1x
-systems: assign a button to "front shift" and check whether the RD
-reports that.
-
-### Native ANT+ vs. ktop
-
-Wheeltop's firmware update from August 2026 reportedly improves native
-ANT+ support on Karoo (gears, gear ratio with teeth, battery, gears in the
-FIT file); reports differ on how complete it is. To compare: gears and
-their order, accuracy of the battery value, shifter batteries, shifting
-statistics in the Hammerhead dashboard. If ANT+ covers the basics, ktop's
-focus is what ANT+ does not provide: exact battery values per component,
-race and sleep mode on the Karoo, Ki2 visual fields, older firmware,
-fine-tuning. Note that ktop's Bluetooth connection keeps the RD awake.
-
-### Firmware
-
-ktop is tested with EDS GeX RD 2.67, shifters L 3.25 / R 4.30, ANT 6.2.
-After a Wheeltop firmware update: check connect, gears, batteries, race
-and sleep mode, and the info dump keys.
+- Fine-tuning from the Karoo: test shifts, micro adjustment, cog positions
+  (bike in a stand, backup and restore of values)
+- Shifter buttons as Karoo buttons (e.g. next page), if the RD reports a
+  usable signal
+- Compare with native ANT+ support in newer Wheeltop firmware
+- Test newer Wheeltop firmware
 
 ## Reporting problems
 
