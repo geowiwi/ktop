@@ -122,6 +122,71 @@ shifts a full charge gives you.
   tested yet; please report your firmware versions (shown in the device
   details) with any problem.
 
+## Roadmap / ideas
+
+Not implemented yet, collected here for later.
+
+### Fine-tuning from the Karoo
+
+The Wheeltop web app adjusts the derailleur over the same Bluetooth
+protocol ktop already uses, so fine-tuning could be done directly on the
+Karoo, without a phone or Web Bluetooth. Known commands (from the
+[eds-ox](https://git.jeckyll.net/published/personal/eds-ox) protocol notes
+and reference app):
+
+| Command | Purpose | Payload |
+|---|---|---|
+| `0x99` rearLifting | shift the RD one gear up / down (test shift) | `01` / `02` |
+| `0x95` fineTuneGear | micro adjustment, probably like the shifter's "T" position (~0.2 mm) | `01` down / `02` up |
+| `0x92` setGearUpValue | set the position of one cog (`H_GEA[1..n]` in the info dump) | gear, 16-bit value |
+| `0x91` setTotalGear | number of cogs | n |
+| `0x89` / `0x85` / `0x82` | front derailleur: shift, micro adjustment, limits (EDS TX / 2x) | as above |
+
+Planned screen: device details → **Fine-tuning**, modelled on the
+official app: current gear with gear up/down, micro +/−, and a list of all
+cogs with their position value (−, +, Set).
+
+Safety rules for this feature:
+
+- Only with the bike in a stand, turning the cranks by hand; disabled
+  while a ride is recording (ktop can read the Karoo ride state).
+- Wrong cog values can move the RD into the spokes: back up the current
+  values before any change, small steps only, confirmation before Set,
+  "restore previous values".
+- Unclear: whether micro adjustments (`0x95`) are stored permanently, and
+  the RD answers `setGearUpValue` with "ok" regardless; ktop would re-read
+  the values after every change.
+
+Suggested order: 1) test shifts, micro +/− and read-only cog values;
+2) editing cog values with backup and restore.
+
+### Shifter buttons as Karoo buttons
+
+karoo-ext can trigger the Karoo's hardware buttons (e.g. next page). The
+missing piece is a signal: the shifters only talk to the RD, and the RD
+reports gear changes, not button presses. ktop logs all raw frames under
+the `ktop-raw` tag to look for a usable pattern (pressing past the last
+cog, holding a button, the fine-tune "T" position). Another idea for 1x
+systems: assign a button to "front shift" and check whether the RD
+reports that.
+
+### Native ANT+ vs. ktop
+
+Wheeltop's firmware update from August 2026 reportedly improves native
+ANT+ support on Karoo (gears, gear ratio with teeth, battery, gears in the
+FIT file); reports differ on how complete it is. To compare: gears and
+their order, accuracy of the battery value, shifter batteries, shifting
+statistics in the Hammerhead dashboard. If ANT+ covers the basics, ktop's
+focus is what ANT+ does not provide: exact battery values per component,
+race and sleep mode on the Karoo, Ki2 visual fields, older firmware,
+fine-tuning. Note that ktop's Bluetooth connection keeps the RD awake.
+
+### Firmware
+
+ktop is tested with EDS GeX RD 2.67, shifters L 3.25 / R 4.30, ANT 6.2.
+After a Wheeltop firmware update: check connect, gears, batteries, race
+and sleep mode, and the info dump keys.
+
 ## Reporting problems
 
 Please open an issue and attach a logcat filtered by `ktop-ble`
