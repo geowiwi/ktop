@@ -34,6 +34,9 @@ follow Ki2 as closely as possible.
     Bike Battery
   - Additionally: battery voltage of rear derailleur, front derailleur and
     both shifters
+- Native Karoo shifting sensor (like Ki2): Karoo's own gear fields work and
+  gear changes are recorded in the FIT file
+- Extra data in the FIT file (developer fields, see below)
 - Companion app:
   - Manage several Wheeltop groupsets (add by scan, rename, reorder, remove)
   - Device details: live drivetrain view, gears, batteries (RD, FD, left
@@ -70,6 +73,16 @@ Optional: open the device in ktop → **Gearing** and enter the chainring
 and cassette teeth (Wheeltop EDS does not report teeth counts). Needed for
 Gears T, Gear Ratio and the "Size" views.
 
+## FIT file
+
+- Gear changes: standard FIT gear-change events, written by Karoo
+- Every minute: `ktop_rd_battery_v`, `ktop_fd_battery_v` (2x),
+  `ktop_left_shifter_v`, `ktop_right_shifter_v`, `ktop_rd_battery` (%)
+- Per ride (session): `ktop_shifts`, `ktop_front_shifts`, `ktop_rear_shifts`,
+  `ktop_rd_battery_start`, `ktop_rd_battery_end`, `ktop_race_mode`
+- Developer fields show up in e.g. intervals.icu, GoldenCheetah and FIT
+  viewers, not in Strava
+
 ## Battery and runtime
 
 - RD battery about 800 mAh; roughly 10,000–20,000 shifts per charge
@@ -88,6 +101,10 @@ Gears T, Gear Ratio and the "Size" views.
 - Ki2's "Shifting Mode" field is Shimano-specific and not available.
 - Fields that were added to a profile with an older ktop version may need
   to be removed and added again.
+- Native shifting / FIT gear events: if the groupset was paired in Karoo
+  with ktop 0.1.2 or older, remove it under Sensors and add it again.
+- If the groupset is also paired via ANT+ (newer Wheeltop firmware), Karoo
+  has two shifting sources; keep only one of them enabled.
 - Shifter buttons cannot be remapped to Karoo actions (e.g. next page)
   yet: the shifters talk only to the rear derailleur, and the derailleur
   does not report button presses to apps. Being investigated.

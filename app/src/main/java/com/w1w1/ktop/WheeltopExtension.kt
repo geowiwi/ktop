@@ -58,6 +58,14 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
 
     private lateinit var lastDeviceStore: LastDeviceStore
 
+    // Ride data in the FIT file (developer fields), see KtopFitRecorder.
+    private val fitRecorder by lazy { KtopFitRecorder(applicationContext, karooSystem, ::bleProvider) }
+
+    override fun startFit(emitter: Emitter<FitEffect>) {
+        Log.i("ktop-ble", "startFit()")
+        fitRecorder.start(emitter)
+    }
+
     override fun onCreate() {
         super.onCreate()
         ble = WheeltopBleClient.getInstance(applicationContext)
@@ -83,7 +91,15 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
         ble.scanForGeX { dev, name ->
             emitter.onNext(
                 Device(
-                    extension, dev.address, types.map { DataType.dataTypeId(extension, it.typeId) }, name
+                    extension, dev.address,
+                    // Native shifting source (like Ki2): Karoo's own gear
+                    // fields and FIT gear-change events, see KtopNativeShifting.
+                    listOf(
+                        DataType.Source.SHIFTING_FRONT_GEAR,
+                        DataType.Source.SHIFTING_REAR_GEAR,
+                        DataType.Source.SHIFTING_BATTERY,
+                    ) + types.map { DataType.dataTypeId(extension, it.typeId) },
+                    name
                 )
             )
         }
@@ -102,6 +118,7 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
         DeviceStore.ensure(applicationContext, uid, null)
         DeviceStore.migrateLegacyGearing(applicationContext, uid)
         emitter.onNext(OnConnectionStatus(statusConnecting()))
+        val nativeShifting = KtopNativeShifting(applicationContext, uid, ble, emitter)
 
         // Karoo can call connectDevice() for this same device from more
         // than one context at once - e.g. the Sensors/pairing screen and
@@ -132,10 +149,17 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
                 ble.connect(
                     uid,
                     token = emitter,
-                    onConnected = { emitter.onNext(OnConnectionStatus(statusConnected())) },
-                    onDisconnected = { emitter.onNext(OnConnectionStatus(statusNotConnected())) },
+                    onConnected = {
+                        emitter.onNext(OnConnectionStatus(statusConnected()))
+                        nativeShifting.start()
+                    },
+                    onDisconnected = {
+                        nativeShifting.stop()
+                        emitter.onNext(OnConnectionStatus(statusNotConnected()))
+                    },
                     onFailed = { reason ->
                         Log.w("ktop-ble", "connectDevice: ble.connect failed: $reason")
+                        nativeShifting.stop()
                         emitter.onNext(OnConnectionStatus(statusNotConnected()))
                     }
                 )
@@ -147,6 +171,7 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
 
         emitter.setCancellable {
             Log.i("ktop-ble", "connectDevice cancelled (uid=$uid) -> ble.disconnect(this caller)")
+            nativeShifting.stop()
             ble.disconnect(emitter)
             emitter.onNext(OnConnectionStatus(statusNotConnected()))
         }

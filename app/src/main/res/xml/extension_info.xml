@@ -12,6 +12,7 @@
     displayName="@string/extension_name"
     icon="@mipmap/ic_launcher"
     id="wheeltop"
+    fitFile="true"
     scansDevices="true">
 
     <!-- ===== Ki2 fields ===== -->
