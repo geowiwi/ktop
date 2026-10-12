@@ -202,7 +202,7 @@ class DeviceDetailsActivity : AppCompatActivity() {
                 "Q_Ver" -> "FD"
                 "L_Ver" -> "L"
                 "R_Ver" -> "R"
-                "REMOTE_V" -> "Shifter"
+                "REMOTE_V" -> getString(R.string.text_firmware_shifter)
                 "ANT_Ver" -> "ANT"
                 else -> k
             }

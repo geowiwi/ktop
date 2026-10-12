@@ -1,17 +1,60 @@
 <resources>
-  <string name="app_name">ktop</string>
+  <!-- Not translated: names and number formats -->
+  <string name="app_name" translatable="false">ktop</string>
+  <string name="extension_name" translatable="false">Wheeltop (EDS)</string>
+  <string name="text_na" translatable="false">N/A</string>
+  <string name="text_param_percentage" translatable="false">%d%%</string>
+  <string name="text_param_gearing" translatable="false">F%1$02d - R%2$02d</string>
+  <string name="text_param_gearing_detailed" translatable="false">F%1$02d [%2$02d] | R%3$02d [%4$02d]</string>
+
+  <!-- Karoo data fields (extension_info.xml). Names/descriptions from Ki2
+       (https://github.com/valterc/ki2, MIT License). -->
+  <string name="field_shifting_battery_percentage" formatted="false">Shifting Battery %</string>
+  <string name="field_shifting_battery_percentage_desc" formatted="false">Shifting battery %.</string>
+  <string name="field_gear_ratio">Gear Ratio</string>
+  <string name="field_gear_ratio_desc">Gear ratio.</string>
+  <string name="field_gears_index">Gears</string>
+  <string name="field_gears_index_desc">View with gears index.</string>
+  <string name="field_gears_size">Gears T</string>
+  <string name="field_gears_size_desc">View with gears size (teeth count).</string>
+  <string name="field_front_gear_index">Front Gear</string>
+  <string name="field_front_gear_index_desc">View with front gear index.</string>
+  <string name="field_front_gear_size">Front Gear T</string>
+  <string name="field_front_gear_size_desc">View with front gear size (teeth count).</string>
+  <string name="field_rear_gear">Rear Gear</string>
+  <string name="field_rear_gear_desc">View with rear gear index.</string>
+  <string name="field_rear_gear_size">Rear Gear T</string>
+  <string name="field_rear_gear_size_desc">View with rear gear size (teeth count).</string>
+  <string name="field_shift_count">Shift Count</string>
+  <string name="field_shift_count_desc">View with total shift count.</string>
+  <string name="field_front_shift_count">F Shift Count</string>
+  <string name="field_front_shift_count_desc">View with front shift count.</string>
+  <string name="field_rear_shift_count">R Shift Count</string>
+  <string name="field_rear_shift_count_desc">View with rear shift count.</string>
+  <string name="field_visual_gears_index">Gears Index (visual)</string>
+  <string name="field_visual_gears_index_desc">Gears visual view with gear index.</string>
+  <string name="field_visual_gears_size">Gears Size (visual)</string>
+  <string name="field_visual_gears_size_desc">Gears visual view with gear size (teeth count).</string>
+  <string name="field_visual_gears_detailed">Gears Detailed (visual)</string>
+  <string name="field_visual_gears_detailed_desc">Gears visual view with battery percentage, gear index and size (teeth count).</string>
+  <string name="field_visual_drivetrain_index">Drivetrain Index (visual)</string>
+  <string name="field_visual_drivetrain_index_desc">Drivetrain visual view with gear index.</string>
+  <string name="field_visual_drivetrain_size">Drivetrain Size (visual)</string>
+  <string name="field_visual_drivetrain_size_desc">Drivetrain visual view with gear size (teeth count).</string>
+  <string name="field_visual_bike_battery">Bike Battery (visual)</string>
+  <string name="field_visual_bike_battery_desc">Visual bike battery view with shifting battery percentage.</string>
+  <string name="field_rear_batt_v">RD Batt V</string>
+  <string name="field_rear_batt_v_desc">Rear derailleur battery voltage.</string>
+  <string name="field_left_batt_v">L Shifter Batt V</string>
+  <string name="field_left_batt_v_desc">Left shifter battery voltage.</string>
+  <string name="field_right_batt_v">R Shifter Batt V</string>
+  <string name="field_right_batt_v_desc">Right shifter battery voltage.</string>
+  <string name="field_front_batt_v">FD Batt V</string>
+  <string name="field_front_batt_v_desc">Front derailleur battery voltage.</string>
+
+  <!-- Texts inside the graphical fields (Ki2 views) -->
   <string name="text_gears">GEARS</string>
   <string name="text_waiting_for_data">WAITING FOR DATA</string>
-  <string name="text_label_rd">RD</string>
-  <string name="text_label_l">L</string>
-  <string name="text_label_r">R</string>
-  <string name="text_label_fd">FD</string>
-  <string name="text_label_shifts">SHIFTS</string>
-  <!-- Ki2 field strings (https://github.com/valterc/ki2, MIT License) -->
-  <string name="text_param_percentage">%d%%</string>
-  <string name="text_na">N/A</string>
-  <string name="text_param_gearing">F%1$02d - R%2$02d</string>
-  <string name="text_param_gearing_detailed">F%1$02d [%2$02d] | R%3$02d [%4$02d]</string>
   <string name="text_drivetrain">Drivetrain</string>
   <string name="text_bike_battery">Bike Battery</string>
 
@@ -31,9 +74,8 @@
   <string name="text_add">Add</string>
   <string name="text_connecting">Connecting…</string>
   <string name="text_connected">Connected</string>
-  <string name="text_disconnected">Disconnected</string>
   <string name="text_not_connected">Not connected</string>
-  <string name="text_connection_status">Connection Status</string>
+  <string name="text_connection_status">Connection status</string>
   <string name="text_manage_device">Manage device</string>
   <string name="text_rename">Rename</string>
   <string name="text_remove">Remove</string>
@@ -43,16 +85,16 @@
   <string name="text_param_gearing_summary">Front: %1$s\nRear: %2$s</string>
   <string name="text_device_details">Device details</string>
   <string name="text_battery">Battery</string>
-  <string name="text_rear_gear">Rear Gear</string>
+  <string name="text_rear_gear">Rear gear</string>
   <string name="text_front_gear">Front gear</string>
   <string name="text_ok">OK</string>
   <string name="text_cancel">Cancel</string>
   <string name="text_race_mode">Race mode</string>
   <string name="text_race_mode_summary">Faster shifting, drains the RD battery faster</string>
-  <string name="text_warning_race_mode">Race mode will drain RD battery faster - continue?</string>
+  <string name="text_warning_race_mode">Race mode will drain the RD battery faster. Continue?</string>
   <string name="text_sleep_mode">Sleep mode</string>
   <string name="text_sleep_mode_summary">RD goes to sleep when idle (recommended)</string>
-  <string name="text_warning_sleep_mode">Disabling sleep mode will drain RD battery faster - continue?</string>
+  <string name="text_warning_sleep_mode">Disabling sleep mode will drain the RD battery faster. Continue?</string>
   <string name="text_command_failed">Command failed</string>
   <string name="text_unknown">Unknown</string>
   <string name="text_battery_rd">RD battery</string>
@@ -60,9 +102,9 @@
   <string name="text_battery_left">Left shifter</string>
   <string name="text_battery_right">Right shifter</string>
   <string name="text_firmware">Firmware</string>
+  <string name="text_firmware_shifter">Shifter</string>
   <string name="text_model">Model</string>
   <string name="text_mac_address">MAC address</string>
-  <string name="text_total_gears">Rear gears</string>
   <string name="text_shift_count">Shift count</string>
   <string name="text_custom_gearing">Custom gearing</string>
   <string name="text_gearing_hint">Teeth counts are not reported by Wheeltop EDS. Enter them here for Gears T, Gear Ratio and the size views. Front: small to big chainring. Rear: gear 1 to N as shown by ktop.</string>
@@ -75,5 +117,4 @@
   <string name="text_about">About</string>
   <string name="text_about_summary">ktop - Wheeltop EDS for Karoo. Data fields and views based on Ki2 by Valter C. (MIT License).</string>
   <string name="text_off">Off</string>
-  <string name="text_param_percentage_value">%s%%</string>
 </resources>

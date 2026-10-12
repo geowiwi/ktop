@@ -108,7 +108,7 @@ class VoltageVisualType(
             isFrontDerailleurField && !config.preview && !bleProvider().hasFrontDerailleur()
 
         fun fmt(v: Double?): String = when {
-            fdMissing() -> "N/A"
+            fdMissing() -> context.getString(R.string.text_na)
             v != null -> String.format(Locale.US, "%.2f", v)
             else -> "0.00"
         }
