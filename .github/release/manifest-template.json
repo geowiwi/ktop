@@ -1,0 +1,11 @@
+{
+  "label": "ktop",
+  "packageName": "com.w1w1.ktop",
+  "iconUrl": "https://github.com/geowiwi/ktop/releases/latest/download/icon.png",
+  "latestApkUrl": "https://github.com/geowiwi/ktop/releases/latest/download/ktop.apk",
+  "latestVersion": "",
+  "latestVersionCode": 0,
+  "developer": "w1w1",
+  "description": "Wheeltop EDS electronic groupsets (OX, OX2, TX, GeX) on Karoo: gears, shift count, battery and drivetrain data fields, race and sleep mode.",
+  "releaseNotes": ""
+}

@@ -49,16 +49,21 @@ follow Ki2 as closely as possible.
 
 ## Installation
 
-1. Download `ktop-<version>.apk` from the
-   [latest release](../../releases).
+1. Download `ktop.apk` from the
+   [latest release](../../releases/latest).
 2. Sideload it to the Karoo
-   ([Hammerhead: Companion App Sideloading](https://support.hammerhead.io/hc/en-us/articles/31576497036827-Companion-App-Sideloading)).
+   ([Hammerhead: Companion App Sideloading](https://support.hammerhead.io/hc/en-us/articles/31576497036827-Companion-App-Sideloading)),
+   e.g. by sharing this link with the Hammerhead Companion app:
+   `https://github.com/geowiwi/ktop/releases/latest/download/ktop.apk`
 3. Open **ktop** on the Karoo once and allow Bluetooth access.
 4. Wake the groupset (shift once or move the bike), press **+** in the
    *Devices* tab and **Add** your groupset.
 5. In Karoo: **Sensors → + → Extensions → Wheeltop (EDS)** and add the
    groupset.
 6. Add the ktop data fields to your ride profile pages.
+
+Updates: Karoo checks GitHub for new ktop releases and offers them for
+installation (pre-releases are not offered).
 
 Optional: open the device in ktop → **Gearing** and enter the chainring
 and cassette teeth (Wheeltop EDS does not report teeth counts). Needed for
@@ -79,37 +84,6 @@ Gears T, Gear Ratio and the "Size" views.
 Please open an issue and attach a logcat filtered by `ktop-ble`
 (Android Studio *Logcat* or `adb logcat -s ktop-ble`), plus your groupset
 model and what you did.
-
-## Building
-
-- Android Studio (JDK 17+).
-- karoo-ext is fetched from GitHub Packages: add a GitHub token with
-  `read:packages` to `~/.gradle/gradle.properties`:
-  ```
-  gpr.user=<github user>
-  gpr.key=<token>
-  ```
-- Release signing (optional) via `local.properties`:
-  ```
-  RELEASE_STORE_FILE=/path/to/keystore.jks
-  RELEASE_STORE_PASSWORD=...
-  RELEASE_KEY_ALIAS=...
-  RELEASE_KEY_PASSWORD=...
-  ```
-
-### Releases (GitHub Actions)
-
-Pushing a tag such as `0.1.0` (or `0.1.0-preview.1`) builds a signed
-release APK and attaches it to a GitHub release. Repository secrets
-needed:
-
-| Secret | Content |
-|---|---|
-| `ANDROID_RELEASE_KEY_BASE64` | release keystore, base64 encoded |
-| `ANDROID_RELEASE_KEY_ALIAS` | key alias |
-| `ANDROID_RELEASE_KEY_PASSWORD` | keystore and key password |
-| `GPR_USER` | GitHub user for karoo-ext |
-| `GPR_KEY` | GitHub token with `read:packages` |
 
 ## Credits
 

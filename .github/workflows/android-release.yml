@@ -1,7 +1,12 @@
 name: Android Release
 
-# Push a tag like 0.1.0 (stable) or 0.1.0-preview.1 (pre-release) to build a
+# Push a tag like 0.1.1 (release) or 0.2.0-preview.1 (pre-release) to build a
 # signed APK and publish it as a GitHub release.
+#
+# Every release carries ktop.apk, icon.png and manifest.json. Karoo reads
+# releases/latest/download/manifest.json (see AndroidManifest.xml) to offer
+# updates. GitHub never marks a pre-release as "latest", so only releases
+# without a -suffix reach riders as an update.
 on:
   push:
     tags:
@@ -25,14 +30,16 @@ jobs:
           elif [[ "${TAG}" =~ ^[0-9]+(\.[0-9]+)*-[A-Za-z]+(\.[0-9]+)?$ ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Invalid tag '${TAG}' - expected e.g. 0.1.0 or 0.1.0-preview.1"
+            echo "Invalid tag '${TAG}' - expected e.g. 0.1.1 or 0.2.0-preview.1"
             exit 1
           fi
+          # versionCode stays above the last dev build (53)
+          echo "version_code=${GITHUB_RUN_NUMBER}00" >> "$GITHUB_OUTPUT"
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           cache: gradle
 
@@ -53,17 +60,32 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-          # versionCode stays above the last dev build (53)
-          VERSION_CODE: ${{ github.run_number }}00
+          VERSION_CODE: ${{ steps.tag.outputs.version_code }}
           VERSION_NAME: ${{ github.ref_name }}
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease
-          cp app/build/outputs/apk/release/app-release.apk "ktop-${GITHUB_REF_NAME}.apk"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk dist/ktop.apk
+          cp docs/media/icon.png dist/icon.png
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: ktop-${{ github.ref_name }}.apk
+          files: |
+            dist/ktop.apk
+            dist/icon.png
           prerelease: ${{ steps.tag.outputs.prerelease }}
+          make_latest: ${{ steps.tag.outputs.prerelease == 'false' }}
           generate_release_notes: true
+
+      - name: Attach Karoo update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "${GITHUB_REF_NAME}" --json body --jq .body > dist/release-notes.md || true
+          python3 .github/release/generate-manifest.py \
+            .github/release/manifest-template.json dist/manifest.json \
+            "${GITHUB_REF_NAME}" "${{ steps.tag.outputs.version_code }}" dist/release-notes.md
+          cat dist/manifest.json
+          gh release upload "${GITHUB_REF_NAME}" dist/manifest.json --clobber

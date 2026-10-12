@@ -34,5 +34,10 @@
       <meta-data android:name="io.hammerhead.karooext.EXTENSION_INFO" android:resource="@xml/extension_info" />
     </service>
 
+    <!-- Karoo checks this for updates (published by .github/workflows/android-release.yml) -->
+    <meta-data
+      android:name="io.hammerhead.karooext.MANIFEST_URL"
+      android:value="https://github.com/geowiwi/ktop/releases/latest/download/manifest.json" />
+
   </application>
 </manifest>
