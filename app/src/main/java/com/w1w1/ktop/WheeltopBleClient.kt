@@ -18,6 +18,7 @@ class WheeltopBleClient(private val appCtx: Context) {
 
     companion object {
         private const val TAG = "ktop-ble"
+        private const val RAW_TAG = "ktop-raw"
 
         private val NUS_SERVICE: UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e")
         private val NUS_CHAR_TX: UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
@@ -995,7 +996,19 @@ class WheeltopBleClient(private val appCtx: Context) {
     }
 
     private fun handleNotify(value: ByteArray) {
-        val f = decodeFrame(value) ?: return
+        val f = decodeFrame(value)
+        if (f == null) {
+            Log.d(RAW_TAG, "undecoded notify ${value.size}B: ${value.toHex()}")
+            return
+        }
+        // Shifter-button test (2026-10-12): the shifters talk only to the
+        // RD, and no button event is documented for apps. Log every frame
+        // except the 30 s battery poll so a test session shows whether the
+        // RD reports anything usable (e.g. a shift past the last cog or the
+        // fine-tune "T" slider). Filter logcat with "ktop-raw".
+        if (f.cmd != CMD_GET_TRANSMISSION_VERSION_INFO) {
+            Log.d(RAW_TAG, "frame cmd=0x${f.cmd.toString(16)} payload=${f.payload.toHex()}")
+        }
 
         when (f.cmd) {
             CMD_GET_KEY -> {
@@ -1051,7 +1064,13 @@ class WheeltopBleClient(private val appCtx: Context) {
                         Log.i(TAG, "serverReportGear raw=$raw -> gear=$g (${if (isStart) "start" else "finish"})")
                         gearFlow.emit(g)
 
-                        if (!isStart) {
+                        if (!isStart && lastGear != null && lastGear == g) {
+                            // Finish report without a gear change: not a
+                            // shift (e.g. pressing past the last cog, if the
+                            // RD reports that at all). Logged for the
+                            // shifter-button test, not counted.
+                            Log.i(TAG, "serverReportGear finish without gear change (gear=$g)")
+                        } else if (!isStart) {
                             val prev = lastGear
                             lastGear = g
 
@@ -1254,3 +1273,5 @@ class WheeltopBleClient(private val appCtx: Context) {
         return crc and 0xFFFF
     }
 }
+
+private fun ByteArray.toHex(): String = joinToString(" ") { "%02x".format(it.toInt() and 0xFF) }

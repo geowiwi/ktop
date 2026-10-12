@@ -7,5 +7,12 @@
   "latestVersionCode": 0,
   "developer": "w1w1",
   "description": "Wheeltop EDS electronic groupsets (OX, OX2, TX, GeX) on Karoo: gears, shift count, battery and drivetrain data fields, race and sleep mode.",
-  "releaseNotes": ""
+  "releaseNotes": "",
+  "screenshotUrls": [
+    "https://raw.githubusercontent.com/geowiwi/ktop/main/docs/media/ride-fields.png",
+    "https://raw.githubusercontent.com/geowiwi/ktop/main/docs/media/app-settings.png"
+  ],
+  "tags": [
+    "performance"
+  ]
 }

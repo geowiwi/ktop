@@ -41,6 +41,7 @@ follow Ki2 as closely as possible.
   - **Race mode** and **sleep mode** switches
   - Custom gearing (teeth counts) per device for Gears T / Gear Ratio
   - Battery warning levels
+- English and German (follows the Karoo language setting)
 
 ## Requirements
 
@@ -69,6 +70,41 @@ Optional: open the device in ktop → **Gearing** and enter the chainring
 and cassette teeth (Wheeltop EDS does not report teeth counts). Needed for
 Gears T, Gear Ratio and the "Size" views.
 
+## Battery and runtime
+
+Rough numbers to plan with; none of them are measured by ktop itself.
+
+| | Figure | Source |
+|---|---|---|
+| RD battery | about 800 mAh, USB-C | [BikeRadar](https://www.bikeradar.com/advice/buyers-guides/wheeltop-buyers-guide) (EDS TX / OX2) |
+| Manufacturer claim | up to 20,000 shifts per charge | BikeRadar (EDS TX) |
+| Rider report | about 20 % in a 4 h ride at 400–500 shifts/h, i.e. roughly 20 h per charge | [TrainerRoad forum](https://www.trainerroad.com/forum/t/wheeltop-eds-tx-1000-mile-review-updated-3k-mile-thoughts/103636) |
+
+Rule of thumb: runtime ≈ shifts per charge ÷ your shifts per hour. With
+the rider report above (about 9,000 shifts per charge) that is about 45 h
+at 200 shifts/h and about 20 h at 450 shifts/h. The manufacturer claim
+would roughly double that.
+
+What changes the consumption:
+
+- **ktop keeps the RD awake while it is connected.** The RD never sleeps
+  while an app is connected (it normally sleeps 3 min after the last
+  shift). While riding this makes no difference; on long stops with the
+  Karoo still connected, the RD stays awake. ktop reads the batteries
+  every 30 s.
+- **Race mode** shifts faster and drains the RD battery faster.
+- **Sleep mode off** keeps the RD awake when idle and drains it faster.
+- A front derailleur (EDS TX) has its own battery.
+
+How ktop shows battery levels: the RD/FD percentage is a straight line
+between 6.6 V (0 %) and 8.2 V (100 %), the shifter coin cells between
+2.0 V and 3.2 V. These are estimates, not a fuel gauge; use the voltage
+fields if you want the raw values.
+
+Measure your own runtime: note **Shifting Battery %** and **Shift Count**
+at the start and end of a ride; % used per shift tells you how many
+shifts a full charge gives you.
+
 ## Known limitations
 
 - Teeth counts must be entered manually (see above).
@@ -78,12 +114,20 @@ Gears T, Gear Ratio and the "Size" views.
 - Ki2's "Shifting Mode" field is Shimano-specific and not available.
 - Fields that were added to a profile with an older ktop version may need
   to be removed and added again.
+- Shifter buttons cannot be remapped to Karoo actions (e.g. next page)
+  yet: the shifters talk only to the rear derailleur, and the derailleur
+  does not report button presses to apps. Being investigated.
+- Tested with EDS GeX firmware RD 2.67, shifters L 3.25 / R 4.30,
+  ANT 6.2. Newer Wheeltop firmware (e.g. the August 2026 update) is not
+  tested yet; please report your firmware versions (shown in the device
+  details) with any problem.
 
 ## Reporting problems
 
 Please open an issue and attach a logcat filtered by `ktop-ble`
 (Android Studio *Logcat* or `adb logcat -s ktop-ble`), plus your groupset
-model and what you did.
+model and what you did. For raw protocol frames also include the
+`ktop-raw` tag (`adb logcat -s ktop-ble ktop-raw`).
 
 ## Credits
 
