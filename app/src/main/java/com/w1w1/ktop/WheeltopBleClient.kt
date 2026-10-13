@@ -362,7 +362,8 @@ class WheeltopBleClient(private val appCtx: Context) {
         if (qNum != null && (frontTotal ?: 0) > 0) {
             frontGearFromQNum(qNum)?.let { lastFrontGear = it; frontGearFlow.emit(it) }
         }
-        Log.i(TAG, "Device info: versions=$versions race=$raceMode qTotal=$frontTotal qNum=$qNum")
+        Log.i(TAG, "Device info: versions=$versions race=$raceMode qTotal=$frontTotal qNum=$qNum " +
+            "keySwitch=${deviceInfo.keySwitch} runCnt=${deviceInfo.runCount} runTime=${deviceInfo.runTime}")
         infoFlow.emit(Unit)
     }
 
