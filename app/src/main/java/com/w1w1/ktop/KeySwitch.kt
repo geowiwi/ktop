@@ -8,8 +8,10 @@ package com.w1w1.ktop
  * eds-ox PROTOCOL-APP.md:
  *  - OX (one shifter, 1 digit): 0 = standard, 1 = buttons swapped
  *  - TX / GeX (3+ digits): digit 1 = right small button, digit 2 = right big
- *    button, digit 3 = left button; 1 = to smaller cog (up shift),
- *    2 = to larger cog (down shift), 3 = front shift.
+ *    button, digit 3 = left button; 1 = to smaller cog (harder),
+ *    2 = to larger cog (easier), 3 = front shift.
+ *    Verified on a GeX (KeySwitch 1120): both right buttons -> smaller cog,
+ *    left button -> larger cog.
  *    GeX reports a 4th digit (e.g. "2120") whose meaning is unknown; it is
  *    ignored here and only visible in the raw value.
  */
@@ -17,6 +19,7 @@ object KeySwitch {
 
     enum class Button { RIGHT_SMALL, RIGHT_BIG, LEFT }
 
+    /** UP = to smaller cog (harder), DOWN = to larger cog (easier). */
     enum class Function { UP, DOWN, FRONT, UNKNOWN }
 
     sealed class Assignment {

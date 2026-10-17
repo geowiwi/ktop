@@ -108,8 +108,8 @@
   <string name="text_button_right_small">R small</string>
   <string name="text_button_right_big">R big</string>
   <string name="text_button_left">L</string>
-  <string name="text_button_up">up</string>
-  <string name="text_button_down">down</string>
+  <string name="text_button_up">harder</string>
+  <string name="text_button_down">easier</string>
   <string name="text_button_front">FD</string>
   <string name="text_button_unknown">?</string>
   <string name="text_button_order_standard">Standard</string>

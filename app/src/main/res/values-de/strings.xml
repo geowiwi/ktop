@@ -99,8 +99,8 @@
   <string name="text_button_right_small">R klein</string>
   <string name="text_button_right_big">R groß</string>
   <string name="text_button_left">L</string>
-  <string name="text_button_up">hoch</string>
-  <string name="text_button_down">runter</string>
+  <string name="text_button_up">schwerer</string>
+  <string name="text_button_down">leichter</string>
   <string name="text_button_front">Umwerfer</string>
   <string name="text_button_unknown">?</string>
   <string name="text_button_order_standard">Standard</string>

@@ -224,7 +224,7 @@ class DeviceDetailsActivity : AppCompatActivity() {
         updatingSwitches = false
     }
 
-    /** Shifter button assignment (read-only), e.g. "R small: down · R big: up · L: down". */
+    /** Shifter button assignment (read-only), e.g. "R small: harder · R big: harder · L: easier". */
     private fun showShifterButtons(a: KeySwitch.Assignment?) {
         shifterButtonsLabel.text = if (a == null) getString(R.string.text_shifter_buttons)
         else getString(R.string.text_shifter_buttons_raw, a.raw)
