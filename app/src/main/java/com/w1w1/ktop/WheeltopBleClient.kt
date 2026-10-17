@@ -50,6 +50,17 @@ class WheeltopBleClient(private val appCtx: Context) {
         // readings, gear pushes) as a leftover ASCII block.
         private const val READ_BLOCK_TIMEOUT_MS = 4_000L
 
+        // startRead is sometimes swallowed by the RD (observed 2026-10-17:
+        // no reply at all, so TOTAL_CNT stays unknown and every gear push
+        // is dropped for the whole connection). It is now sent only after
+        // the getTransmissionVersionInfo reply has arrived, and retried a
+        // few times if the read still times out.
+        private const val MAX_START_READ_ATTEMPTS = 3
+        private const val START_READ_DELAY_MS = 200L
+        private const val START_READ_RETRY_DELAY_MS = 500L
+        // Fallback if the getTransmissionVersionInfo reply never comes.
+        private const val START_READ_FALLBACK_MS = 2_000L
+
         // A connectGatt() right after a scan/bond change frequently fails
         // transiently with GATT_ERROR (status 133) on many Android BLE
         // stacks. Retrying a couple of times with a short delay clears
@@ -334,6 +345,29 @@ class WheeltopBleClient(private val appCtx: Context) {
     private val readBuffer = StringBuilder()
     private var readTimeoutRunnable: Runnable? = null
 
+    // Last raw 0x98 position seen before TOTAL_CNT is known (a shift during
+    // the device-info read). Applied in finishReadBlocks() instead of the
+    // dump's NUM, which is older.
+    private var pendingRawGear: Int? = null
+
+    // 0x98 log dedupe: the RD repeats the same start frame ~20x per shift.
+    private var lastGearPayload: ByteArray? = null
+    private var gearRepeatCount = 0
+
+    // Device-info read sequencing (see MAX_START_READ_ATTEMPTS).
+    private var deviceInfoPending = false
+    private var startReadAttempt = 0
+    private val startReadRunnable = Runnable {
+        deviceInfoPending = false
+        sendStartRead()
+    }
+
+    /** Schedules startRead once (after the version-info reply, a retry or the fallback). */
+    private fun scheduleStartRead(delayMs: Long) {
+        connectHandler.removeCallbacks(startReadRunnable)
+        connectHandler.postDelayed(startReadRunnable, delayMs)
+    }
+
     private val totalCntRegex = Regex("""TOTAL_CNT:(\d+)""")
     private val numRegex = Regex("""(?<![A-Za-z_])NUM:(\d+)""")
     private val versionRegex = Regex("""(REMOTE_V|GEARS_V|L_Ver|R_Ver|Q_Ver|H_Ver|ANT_Ver):([0-9]+(?:\.[0-9]+)?)""")
@@ -370,7 +404,11 @@ class WheeltopBleClient(private val appCtx: Context) {
     private val battPollRunnable = object : Runnable {
         override fun run() {
             if (!battPolling) return
-            if (sessionKey != 0) sendGetTransmissionVersionInfo()
+            // Don't interleave with a running device-info read - the RD
+            // tends to drop startRead/read when another request overlaps.
+            if (sessionKey != 0 && readTimeoutRunnable == null && !deviceInfoPending) {
+                sendGetTransmissionVersionInfo()
+            }
             battHandler.postDelayed(this, BATT_POLL_MS)
         }
     }
@@ -762,6 +800,13 @@ class WheeltopBleClient(private val appCtx: Context) {
         connectAttempt = 0
         lastGear = null
         totalGears = null
+        connectHandler.removeCallbacks(startReadRunnable)
+        clearReadTimeout()
+        deviceInfoPending = false
+        startReadAttempt = 0
+        pendingRawGear = null
+        lastGearPayload = null
+        gearRepeatCount = 0
         lastFrontGear = null
         frontTotal = null
         frontShiftCount = 0
@@ -796,8 +841,14 @@ class WheeltopBleClient(private val appCtx: Context) {
     private fun armReadTimeout() {
         clearReadTimeout()
         val r = Runnable {
-            Log.w(TAG, "Timed out waiting for read block $readCurrentBlock/$readBlocksTotal - abandoning device-info read")
+            Log.w(TAG, "Timed out waiting for read block $readCurrentBlock/$readBlocksTotal - abandoning device-info read " +
+                "(attempt $startReadAttempt/$MAX_START_READ_ATTEMPTS)")
             abandonReadBlocks()
+            if (totalGears == null && sessionKey != 0 && startReadAttempt < MAX_START_READ_ATTEMPTS) {
+                scheduleStartRead(START_READ_RETRY_DELAY_MS)
+            } else if (totalGears == null) {
+                Log.e(TAG, "Device info not available after $startReadAttempt attempts - gear numbers unknown for this connection")
+            }
         }
         readTimeoutRunnable = r
         connectHandler.postDelayed(r, READ_BLOCK_TIMEOUT_MS)
@@ -906,7 +957,8 @@ class WheeltopBleClient(private val appCtx: Context) {
             cmd = CMD_START_READ,
             payload = byteArrayOf(0x80.toByte())
         )
-        Log.i(TAG, "-> startRead")
+        startReadAttempt += 1
+        Log.i(TAG, "-> startRead (attempt $startReadAttempt/$MAX_START_READ_ATTEMPTS)")
         armReadTimeout()
         enqueueWrite(frame)
     }
@@ -951,6 +1003,11 @@ class WheeltopBleClient(private val appCtx: Context) {
         readBuffer.setLength(0)
         clearReadTimeout()
 
+        // The version-info reply (battery) can get lost when the RD is busy
+        // reporting a shift right after connect (seen 2026-10-17: ride
+        // started with battery=null). Ask again now that the link is idle.
+        if (lastRearBatteryV == null) sendGetTransmissionVersionInfo()
+
         parseDeviceInfo(text)
 
         val total = totalCntRegex.find(text)?.groupValues?.get(1)?.toIntOrNull()
@@ -960,12 +1017,16 @@ class WheeltopBleClient(private val appCtx: Context) {
         }
         totalGears = total
 
+        val pending = pendingRawGear
+        pendingRawGear = null
         val num = numRegex.find(text)?.groupValues?.get(1)?.toIntOrNull()
-        if (num != null) {
-            val g = total - num + 1
+        val raw = pending ?: num
+        if (raw != null) {
+            val g = total - raw + 1
             if (g in 1..total) {
                 lastGear = g
-                Log.i(TAG, "Initial gear from device-info dump: $g/$total")
+                val src = if (pending != null) "0x98 during device-info read" else "device-info dump"
+                Log.i(TAG, "Initial gear from $src: $g/$total")
                 gearFlow.emit(g)
             }
         }
@@ -990,7 +1051,12 @@ class WheeltopBleClient(private val appCtx: Context) {
     // else is a normal framed packet.
     private fun onNotifyRaw(value: ByteArray) {
         if (readBlocksTotal > 0 && readCurrentBlock < readBlocksTotal) {
-            handleReadBlockChunk(value)
+            // Shifting during the dump interleaves framed 0x98 pushes with
+            // the ASCII chunks (seen 2026-10-17: ANT_Ver/Q_TOTAL lost because
+            // a frame was counted as a block). A chunk never passes the
+            // prefix + CRC16 check of decodeFrame(), so route real frames
+            // to handleNotify() and keep only ASCII in the buffer.
+            if (decodeFrame(value) != null) handleNotify(value) else handleReadBlockChunk(value)
         } else {
             handleNotify(value)
         }
@@ -1007,6 +1073,19 @@ class WheeltopBleClient(private val appCtx: Context) {
         // except the 30 s battery poll so a test session shows whether the
         // RD reports anything usable (e.g. a shift past the last cog or the
         // fine-tune "T" slider). Filter logcat with "ktop-raw".
+        if (f.cmd == CMD_SERVER_REPORT_GEAR) {
+            // Identical repeats carry no new information (same position,
+            // same start/finish state) - drop them before logging.
+            if (lastGearPayload?.contentEquals(f.payload) == true) {
+                gearRepeatCount++
+                return
+            }
+            if (gearRepeatCount > 0) {
+                Log.d(RAW_TAG, "previous 0x98 frame repeated ${gearRepeatCount}x")
+                gearRepeatCount = 0
+            }
+            lastGearPayload = f.payload.copyOf()
+        }
         if (f.cmd != CMD_GET_TRANSMISSION_VERSION_INFO) {
             Log.d(RAW_TAG, "frame cmd=0x${f.cmd.toString(16)} payload=${f.payload.toHex()}")
         }
@@ -1027,10 +1106,15 @@ class WheeltopBleClient(private val appCtx: Context) {
                     // =====================================================
 
                     startBatteryPolling()
-                    sendGetTransmissionVersionInfo()
                     // Learn TOTAL_CNT (and the initial gear) - needed to
                     // interpret serverReportGear(0x98) pushes below.
-                    sendStartRead()
+                    // startRead goes out only after the version-info reply
+                    // (CMD_GET_TRANSMISSION_VERSION_INFO below); sent right
+                    // behind it, the RD sometimes never answers startRead.
+                    startReadAttempt = 0
+                    deviceInfoPending = true
+                    sendGetTransmissionVersionInfo()
+                    scheduleStartRead(START_READ_FALLBACK_MS)
                 }
             }
 
@@ -1057,6 +1141,10 @@ class WheeltopBleClient(private val appCtx: Context) {
             // only count a completed shift once, on the finish event.
             CMD_SERVER_REPORT_GEAR -> {
                 val total = totalGears
+                if ((total == null || total <= 0) && f.payload.size >= 6) {
+                    pendingRawGear = f.payload[4].toInt() and 0xFF
+                    Log.i(TAG, "serverReportGear raw=$pendingRawGear before TOTAL_CNT known - kept for initial gear")
+                }
                 if (total != null && total > 0 && f.payload.size >= 6) {
                     val raw = f.payload[4].toInt() and 0xFF
                     val isStart = (f.payload[5].toInt() and 0xFF) == 1
@@ -1075,15 +1163,23 @@ class WheeltopBleClient(private val appCtx: Context) {
                             val prev = lastGear
                             lastGear = g
 
-                            shiftCount += 1
+                            // Count cog steps, not finish reports: during a
+                            // multi-shift (long press) the RD often skips the
+                            // finish report of intermediate cogs (e.g. 4->3->2->1
+                            // ends with a single finish at 1), which would count
+                            // as one shift. Verified 2026-10-17: 23 cog steps,
+                            // 18 finish reports.
+                            val steps = if (prev != null) kotlin.math.abs(g - prev) else 1
+
+                            shiftCount += steps
                             shiftCountFlow.emit(shiftCount)
 
                             if (prev != null) {
                                 if (g > prev) {
-                                    shiftUpCount += 1
+                                    shiftUpCount += steps
                                     shiftUpCountFlow.emit(shiftUpCount)
                                 } else if (g < prev) {
-                                    shiftDownCount += 1
+                                    shiftDownCount += steps
                                     shiftDownCountFlow.emit(shiftDownCount)
                                 }
                             }
@@ -1116,6 +1212,11 @@ class WheeltopBleClient(private val appCtx: Context) {
                     if (f.payload.size > 12) {
                         val sleep = (f.payload[12].toInt() and 0xFF) == 0
                         if (sleepEnabled != sleep) { sleepEnabled = sleep; infoFlow.emit(Unit) }
+                    }
+
+                    if (deviceInfoPending) {
+                        deviceInfoPending = false
+                        scheduleStartRead(START_READ_DELAY_MS)
                     }
 
                     emitVoltage(rdV, ::lastRearBatteryV, rearBatteryVFlow)

@@ -25,10 +25,14 @@ abstract class KtopExtensionView(protected val context: Context) {
 
     protected val karooTheme: KarooTheme get() = karooTheme(context)
 
-    /** Ki2 PreferencesView.getAccentColor() with the default accent setting. */
+    /**
+     * Selected gear color. Ki2 uses grey-blue (hh_gears_active_dark) on the
+     * dark theme; ktop uses white like the native Karoo gear fields for
+     * better contrast. Light theme unchanged.
+     */
     protected val accentColor: Int
         get() = if (karooTheme == KarooTheme.WHITE) context.getColor(R.color.hh_gears_active_light)
-        else context.getColor(R.color.hh_gears_active_dark)
+        else context.getColor(R.color.white)
 
     abstract fun createView(layoutInflater: LayoutInflater, viewConfig: ViewConfig): View
     abstract fun update(state: KtopShiftingState)
@@ -88,8 +92,8 @@ class GearsExtensionView(context: Context, private val showGearSize: Boolean = f
         } else {
             textViewWaitingForData?.setTextColor(context.getColor(R.color.white))
             textViewGears?.setTextColor(context.getColor(R.color.white))
-            gearsView?.setUnselectedGearBorderColor(context.getColor(R.color.hh_gears_border_dark))
-            gearsView?.setSelectedGearColor(context.getColor(R.color.hh_gears_active_dark))
+            gearsView?.setUnselectedGearBorderColor(context.getColor(R.color.white))
+            gearsView?.setSelectedGearColor(context.getColor(R.color.white))
         }
         return v
     }
@@ -149,8 +153,8 @@ class GearsDetailedExtensionView(context: Context) : KtopExtensionView(context) 
             textViewWaitingForData?.setTextColor(context.getColor(R.color.white))
             textViewGears?.setTextColor(context.getColor(R.color.white))
             textViewBattery?.setTextColor(context.getColor(R.color.white))
-            gearsView?.setUnselectedGearBorderColor(context.getColor(R.color.hh_gears_border_dark))
-            gearsView?.setSelectedGearColor(context.getColor(R.color.hh_gears_active_dark))
+            gearsView?.setUnselectedGearBorderColor(context.getColor(R.color.white))
+            gearsView?.setSelectedGearColor(context.getColor(R.color.white))
         }
         return v
     }

@@ -10,7 +10,7 @@
      arbitrary custom View directly.
 -->
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/imageView_remote"
+    android:id="@android:id/icon"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scaleType="fitCenter" />

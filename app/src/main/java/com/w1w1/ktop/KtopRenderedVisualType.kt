@@ -65,7 +65,10 @@ class KtopRenderedVisualType(
                         extensionView.update(state)
                         val bitmap = BitmapViewRenderer.render(view, config.viewSize.first, config.viewSize.second)
                         val rv = RemoteViews(context.packageName, R.layout.remote_view_image)
-                        rv.setImageViewBitmap(R.id.imageView_remote, bitmap)
+                        // Framework id on purpose: this ImageView is inflated into the Ride
+                        // app's view tree, where an app id (0x7f...) can collide with one
+                        // of its fragment containers -> ClassCastException in Ride.
+                        rv.setImageViewBitmap(android.R.id.icon, bitmap)
                         emitter.updateView(rv)
                         last = state
                     } catch (t: Throwable) {

@@ -106,9 +106,12 @@ Gears T, Gear Ratio and the "Size" views.
   with ktop 0.1.2 or older, remove it under Sensors and add it again.
 - If the groupset is also paired via ANT+ (newer Wheeltop firmware), Karoo
   has two shifting sources; keep only one of them enabled.
-- Shifter buttons cannot be remapped to Karoo actions (e.g. next page)
-  yet: the shifters talk only to the rear derailleur, and the derailleur
-  does not report button presses to apps. Being investigated.
+- Shifter buttons cannot be used as Karoo buttons (e.g. next page): the
+  shifters talk only to the rear derailleur, which reports only the
+  resulting cog position (serverReportGear), not the button. Both right
+  buttons give identical frames, a long press looks like several single
+  shifts, and pressing past the last cog sends nothing (logcat test,
+  EDS GeX, 2026-10-17).
 - Tested with EDS GeX firmware RD 2.67, shifters L 3.25 / R 4.30,
   ANT 6.2. Newer Wheeltop firmware (e.g. the August 2026 update) is not
   tested yet; please report your firmware versions (shown in the device
@@ -118,8 +121,6 @@ Gears T, Gear Ratio and the "Size" views.
 
 - Fine-tuning from the Karoo: test shifts, micro adjustment, cog positions
   (bike in a stand, backup and restore of values)
-- Shifter buttons as Karoo buttons (e.g. next page), if the RD reports a
-  usable signal
 - Compare with native ANT+ support in newer Wheeltop firmware
 - Test newer Wheeltop firmware
 

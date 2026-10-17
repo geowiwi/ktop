@@ -26,7 +26,8 @@ android {
         targetSdk = 34
         // Must stay above 53 (last pre-0.1 dev build) so existing installs can update.
         versionCode = localOrEnv("VERSION_CODE")?.toIntOrNull() ?: 100
-        versionName = localOrEnv("VERSION_NAME") ?: "0.1.0"
+        // Fallback for local builds - keep in sync with the release tag (CI sets VERSION_NAME from the tag).
+        versionName = localOrEnv("VERSION_NAME") ?: "0.1.5"
     }
 
     signingConfigs {
