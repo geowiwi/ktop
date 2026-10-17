@@ -3,7 +3,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20" // Match this to your Kotlin version
+    id("org.jetbrains.kotlin.plugin.compose") // version set in root build.gradle.kts
 }
 
 // Local, uncommitted settings (local.properties) or environment (CI):
@@ -31,9 +31,15 @@ android {
 
     signingConfigs {
         val storeFilePath = localOrEnv("RELEASE_STORE_FILE")
-        if (storeFilePath != null) {
+        val keystore = storeFilePath?.let { p ->
+            listOf(rootProject.file(p), file(p)).firstOrNull { it.isFile }
+        }
+        if (storeFilePath != null && keystore == null) {
+            logger.warn("ktop: RELEASE_STORE_FILE '$storeFilePath' not found - release build stays unsigned")
+        }
+        if (keystore != null) {
             create("release") {
-                storeFile = rootProject.file(storeFilePath).takeIf { it.exists() } ?: file(storeFilePath)
+                storeFile = keystore
                 storePassword = localOrEnv("RELEASE_STORE_PASSWORD")
                 keyAlias = localOrEnv("RELEASE_KEY_ALIAS")
                 keyPassword = localOrEnv("RELEASE_KEY_PASSWORD")
