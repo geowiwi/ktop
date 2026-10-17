@@ -40,7 +40,8 @@ follow Ki2 as closely as possible.
 - Companion app:
   - Manage several Wheeltop groupsets (add by scan, rename, reorder, remove)
   - Device details: live drivetrain view, gears, batteries (RD, FD, left
-    and right shifter), firmware versions
+    and right shifter), firmware versions, shifter button assignment
+    (read-only)
   - **Race mode** and **sleep mode** switches
   - Custom gearing (teeth counts) per device for Gears T / Gear Ratio
   - Battery warning levels

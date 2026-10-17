@@ -569,6 +569,30 @@
                     android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp">
+
+            <TextView
+                android:id="@+id/textview_device_details_shifter_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_na"
+                android:textColor="@color/hh_black"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textview_device_details_shifter_buttons_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_shifter_buttons"
+                android:textColor="@color/hh_light_grey"
+                android:textSize="13sp" />
+        </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

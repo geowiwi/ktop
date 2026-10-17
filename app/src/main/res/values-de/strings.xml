@@ -94,6 +94,17 @@
   <string name="text_battery_right">Schalter rechts</string>
   <string name="text_firmware">Firmware</string>
   <string name="text_firmware_shifter">Schalter</string>
+  <string name="text_shifter_buttons">Schaltertasten</string>
+  <string name="text_shifter_buttons_raw">Schaltertasten · KeySwitch %1$s</string>
+  <string name="text_button_right_small">R klein</string>
+  <string name="text_button_right_big">R groß</string>
+  <string name="text_button_left">L</string>
+  <string name="text_button_up">hoch</string>
+  <string name="text_button_down">runter</string>
+  <string name="text_button_front">Umwerfer</string>
+  <string name="text_button_unknown">?</string>
+  <string name="text_button_order_standard">Standard</string>
+  <string name="text_button_order_swapped">Getauscht</string>
   <string name="text_model">Modell</string>
   <string name="text_mac_address">MAC-Adresse</string>
   <string name="text_shift_count">Schaltvorgänge</string>

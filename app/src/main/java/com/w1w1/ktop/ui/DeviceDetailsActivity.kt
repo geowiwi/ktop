@@ -17,6 +17,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.valterc.ki2.views.DrivetrainView
 import com.w1w1.ktop.BatteryCurves
 import com.w1w1.ktop.DeviceStore
+import com.w1w1.ktop.KeySwitch
 import com.w1w1.ktop.KtopShiftingState
 import com.w1w1.ktop.R
 import com.w1w1.ktop.WheeltopBleClient
@@ -65,6 +66,8 @@ class DeviceDetailsActivity : AppCompatActivity() {
     private lateinit var battRight: TextView
     private lateinit var model: TextView
     private lateinit var firmware: TextView
+    private lateinit var shifterButtons: TextView
+    private lateinit var shifterButtonsLabel: TextView
     private lateinit var reconnect: MaterialButton
 
     private val ticker = object : Runnable {
@@ -97,6 +100,8 @@ class DeviceDetailsActivity : AppCompatActivity() {
         battRight = findViewById(R.id.textview_device_details_battery_right)
         model = findViewById(R.id.textview_device_details_model)
         firmware = findViewById(R.id.textview_device_details_firmware)
+        shifterButtons = findViewById(R.id.textview_device_details_shifter_buttons)
+        shifterButtonsLabel = findViewById(R.id.textview_device_details_shifter_buttons_label)
         reconnect = findViewById(R.id.button_device_details_reconnect)
 
         drivetrain.setSelectedGearColor(getColor(R.color.hh_gears_active_light))
@@ -172,8 +177,9 @@ class DeviceDetailsActivity : AppCompatActivity() {
 
         val connected = st == ConnStatus.CONNECTED && isThisDevice()
         if (!connected) {
-            listOf(rearGear, frontGear, shiftCount, totalGears, battRd, battFd, battLeft, battRight, firmware)
+            listOf(rearGear, frontGear, shiftCount, totalGears, battRd, battFd, battLeft, battRight, firmware, shifterButtons)
                 .forEach { it.setText(R.string.text_na); it.setCompoundDrawables(null, null, null, null) }
+            shifterButtonsLabel.setText(R.string.text_shifter_buttons)
             model.text = device?.type?.ifBlank { null } ?: getString(R.string.text_unknown)
             race.isEnabled = false
             sleep.isEnabled = false
@@ -208,6 +214,7 @@ class DeviceDetailsActivity : AppCompatActivity() {
             }
             "$label $value"
         }
+        showShifterButtons(KeySwitch.decode(ble.deviceInfo.keySwitch))
 
         updatingSwitches = true
         race.isEnabled = ble.raceMode != null
@@ -215,6 +222,32 @@ class DeviceDetailsActivity : AppCompatActivity() {
         sleep.isEnabled = ble.sleepEnabled != null
         sleep.isChecked = ble.sleepEnabled == true
         updatingSwitches = false
+    }
+
+    /** Shifter button assignment (read-only), e.g. "R small: down · R big: up · L: down". */
+    private fun showShifterButtons(a: KeySwitch.Assignment?) {
+        shifterButtonsLabel.text = if (a == null) getString(R.string.text_shifter_buttons)
+        else getString(R.string.text_shifter_buttons_raw, a.raw)
+        shifterButtons.text = when (a) {
+            null -> getString(R.string.text_na)
+            is KeySwitch.Assignment.SingleShifter -> getString(
+                if (a.swapped) R.string.text_button_order_swapped else R.string.text_button_order_standard)
+            is KeySwitch.Assignment.PerButton -> a.buttons.entries.joinToString("  ·  ") { (button, fn) ->
+                val b = when (button) {
+                    KeySwitch.Button.RIGHT_SMALL -> getString(R.string.text_button_right_small)
+                    KeySwitch.Button.RIGHT_BIG -> getString(R.string.text_button_right_big)
+                    KeySwitch.Button.LEFT -> getString(R.string.text_button_left)
+                }
+                val f = when (fn) {
+                    KeySwitch.Function.UP -> getString(R.string.text_button_up)
+                    KeySwitch.Function.DOWN -> getString(R.string.text_button_down)
+                    KeySwitch.Function.FRONT -> getString(R.string.text_button_front)
+                    KeySwitch.Function.UNKNOWN -> getString(R.string.text_button_unknown)
+                }
+                "$b: $f"
+            }
+            is KeySwitch.Assignment.Unknown -> getString(R.string.text_unknown)
+        }
     }
 
     /** Main pack (RD/FD): "82% · 7.82 V" with Ki2's battery icon. */

@@ -103,6 +103,17 @@
   <string name="text_battery_right">Right shifter</string>
   <string name="text_firmware">Firmware</string>
   <string name="text_firmware_shifter">Shifter</string>
+  <string name="text_shifter_buttons">Shifter buttons</string>
+  <string name="text_shifter_buttons_raw">Shifter buttons · KeySwitch %1$s</string>
+  <string name="text_button_right_small">R small</string>
+  <string name="text_button_right_big">R big</string>
+  <string name="text_button_left">L</string>
+  <string name="text_button_up">up</string>
+  <string name="text_button_down">down</string>
+  <string name="text_button_front">FD</string>
+  <string name="text_button_unknown">?</string>
+  <string name="text_button_order_standard">Standard</string>
+  <string name="text_button_order_swapped">Swapped</string>
   <string name="text_model">Model</string>
   <string name="text_mac_address">MAC address</string>
   <string name="text_shift_count">Shift count</string>
