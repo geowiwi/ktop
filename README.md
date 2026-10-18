@@ -37,6 +37,14 @@ follow Ki2 as closely as possible.
 - Native Karoo shifting sensor (like Ki2): Karoo's own gear fields work and
   gear changes are recorded in the FIT file
 - Extra data in the FIT file (developer fields, see below)
+- **Overlay** (like Ki2): gear pop-up on top of every ride page, also the
+  map. Shows gear, teeth/ratio (with custom gearing), cassette bar and RD
+  battery; configurable display time, position, theme and opacity. Needs
+  "Display over other apps" for ktop (the Settings tab asks for it).
+- **Sounds** (like Ki2): Karoo beep when reaching the easiest or hardest
+  gear (single/double beep, Karoo signal, bell)
+- **Low battery alert** during the ride for the shifter coin cells and the
+  front derailleur (Karoo itself warns about the rear derailleur)
 - Companion app:
   - Manage several Wheeltop groupsets (add by scan, rename, reorder, remove)
   - Device details: live drivetrain view, gears, batteries (RD, FD, left

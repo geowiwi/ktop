@@ -124,8 +124,45 @@
   <string name="text_number_of_gears">Number of gears</string>
   <string name="text_battery_level_low">Low battery level</string>
   <string name="text_battery_level_critical">Critical battery level</string>
-  <string name="text_battery_settings_summary">Battery colors in the data fields</string>
+  <string name="text_battery_settings_summary">Battery colors in the data fields and alerts</string>
   <string name="text_about">About</string>
   <string name="text_about_summary">ktop - Wheeltop EDS for Karoo. Data fields and views based on Ki2 by Valter C. (MIT License).</string>
+  <!-- Overlay / alerts -->
+  <string name="text_overlay">Overlay</string>
+  <string name="text_overlay_summary">Gear pop-up on top of every ride page, also the map</string>
+  <string name="text_overlay_enabled">Show overlay</string>
+  <string name="text_overlay_enabled_summary">Pops up on every gear change. Tap it to hide.</string>
+  <string name="text_overlay_permission_missing">Permission missing: allow ktop to display over other apps</string>
+  <string name="text_overlay_duration">Display time</string>
+  <string name="text_overlay_position">Position</string>
+  <string name="text_overlay_theme">Theme</string>
+  <string name="text_overlay_opacity">Opacity</string>
+  <string name="text_overlay_test">Test overlay</string>
+  <string name="text_overlay_test_summary">Shows the overlay for 4 seconds</string>
+  <string name="text_overlay_gear" translatable="false">%1$d/%2$d</string>
+  <string name="text_overlay_gear_2x" translatable="false">F%1$s  R%2$d/%3$d</string>
+  <string name="text_overlay_teeth" translatable="false">%1$d-%2$d · %3$.2f</string>
+  <string name="text_overlay_rear_teeth" translatable="false">%1$dT</string>
+  <string name="text_always">Always</string>
+  <string name="text_top">Top</string>
+  <string name="text_center">Center</string>
+  <string name="text_bottom">Bottom</string>
+  <string name="text_theme_auto">Like Karoo</string>
+  <string name="text_theme_dark">Dark</string>
+  <string name="text_theme_light">Light</string>
+  <string name="text_audio_alerts">Sounds</string>
+  <string name="text_audio_alerts_summary">Karoo beeps at the end of the cassette</string>
+  <string name="text_audio_alerts_enabled">Sounds on</string>
+  <string name="text_audio_lowest_gear">Easiest gear (largest cog)</string>
+  <string name="text_audio_highest_gear">Hardest gear (smallest cog)</string>
+  <string name="text_sound_single_beep">Single beep</string>
+  <string name="text_sound_double_beep">Double beep</string>
+  <string name="text_sound_karoo_generic">Karoo signal</string>
+  <string name="text_sound_bell_old">Bell (old)</string>
+  <string name="text_sound_bell_new">Bell (new)</string>
+  <string name="text_battery_alerts">Low battery alert in the ride</string>
+  <string name="text_battery_alerts_summary">Shifters and front derailleur (Karoo warns about the rear derailleur itself)</string>
+  <string name="text_alert_battery_title">Wheeltop battery low</string>
+  <string name="text_alert_battery_detail">%1$s: %2$d%% (%3$.2f V)</string>
   <string name="text_off">Off</string>
 </resources>

@@ -61,6 +61,16 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
     // Ride data in the FIT file (developer fields), see KtopFitRecorder.
     private val fitRecorder by lazy { KtopFitRecorder(applicationContext, karooSystem, ::bleProvider) }
 
+    // Ki2-style in-ride helpers: sounds + battery alerts, gear overlay.
+    private var rideAlerts: KtopRideAlerts? = null
+    private var overlay: KtopOverlay? = null
+
+    private fun startRideHelpers() {
+        if (rideAlerts != null) return
+        rideAlerts = KtopRideAlerts(applicationContext, karooSystem, ble).also { it.start() }
+        overlay = KtopOverlay(applicationContext, karooSystem, ble).also { it.start() }
+    }
+
     override fun startFit(emitter: Emitter<FitEffect>) {
         Log.i("ktop-ble", "startFit()")
         fitRecorder.start(emitter)
@@ -75,11 +85,24 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
         // time the rider tried to pair/connect the EDS groupset from the
         // Karoo sensor screen. That looked like "Bluetooth doesn't work".
         lastDeviceStore = LastDeviceStore(applicationContext)
-        karooSystem.connect { karooSystem.dispatch(RequestBluetooth(resourceId = btResourceId)) }
+        karooSystem.connect { connected ->
+            karooSystem.dispatch(RequestBluetooth(resourceId = btResourceId))
+            if (connected) mainHandler.post {
+                try {
+                    startRideHelpers()
+                } catch (t: Throwable) {
+                    Log.e("ktop-ble", "ride helpers failed to start", t)
+                }
+            }
+        }
         // KEIN auto-connect hier, sonst race mit connectDevice()
     }
 
     override fun onDestroy() {
+        overlay?.stop()
+        rideAlerts?.stop()
+        overlay = null
+        rideAlerts = null
         karooSystem.dispatch(ReleaseBluetooth(resourceId = btResourceId))
         karooSystem.disconnect()
         ble.close()
@@ -107,6 +130,11 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
     }
 
     private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+
+    private companion object {
+        const val RECONNECT_MIN_MS = 10_000L
+        const val RECONNECT_MAX_MS = 60_000L
+    }
 
     override fun connectDevice(uid: String, emitter: Emitter<DeviceEvent>) {
         Log.i("ktop-ble", "connectDevice(uid=$uid)")
@@ -141,7 +169,26 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
         // that's the only Activity in this app and the only place that
         // can show the permission prompt. No need to chase this from the
         // service on every connect.
-        mainHandler.post {
+        // Reconnect loop: Karoo calls connectDevice() once and keeps the
+        // emitter open. If the first attempt fails (RD asleep, Bluetooth
+        // permission not granted yet) or the link drops during the ride,
+        // nothing else would bring it back (seen 2026-10-17/18: a whole ride
+        // without connection after a failed first attempt). Retry with
+        // backoff until Karoo cancels the emitter.
+        var cancelled = false
+        var retryDelayMs = RECONNECT_MIN_MS
+        lateinit var doConnect: () -> Unit
+        val retry = Runnable { if (!cancelled) doConnect() }
+
+        fun scheduleReconnect(reason: String) {
+            if (cancelled) return
+            mainHandler.removeCallbacks(retry)
+            Log.i("ktop-ble", "connectDevice: $reason - reconnect in ${retryDelayMs / 1000}s")
+            mainHandler.postDelayed(retry, retryDelayMs)
+            retryDelayMs = (retryDelayMs * 2).coerceAtMost(RECONNECT_MAX_MS)
+        }
+
+        doConnect = {
             try {
                 Log.i("ktop-ble", "connectDevice: calling ble.connect($uid)")
                 karooSystem.dispatch(RequestBluetooth(resourceId = btResourceId))
@@ -150,27 +197,35 @@ class WheeltopExtension : KarooExtension("wheeltop", BuildConfig.VERSION_NAME) {
                     uid,
                     token = emitter,
                     onConnected = {
+                        retryDelayMs = RECONNECT_MIN_MS
                         emitter.onNext(OnConnectionStatus(statusConnected()))
                         nativeShifting.start()
                     },
                     onDisconnected = {
                         nativeShifting.stop()
                         emitter.onNext(OnConnectionStatus(statusNotConnected()))
+                        scheduleReconnect("disconnected")
                     },
                     onFailed = { reason ->
                         Log.w("ktop-ble", "connectDevice: ble.connect failed: $reason")
                         nativeShifting.stop()
                         emitter.onNext(OnConnectionStatus(statusNotConnected()))
+                        scheduleReconnect("failed ($reason)")
                     }
                 )
             } catch (t: Throwable) {
                 Log.e("ktop-ble", "connectDevice: ERROR in main post", t)
                 emitter.onNext(OnConnectionStatus(statusNotConnected()))
+                scheduleReconnect("error")
             }
         }
 
+        mainHandler.post { doConnect() }
+
         emitter.setCancellable {
             Log.i("ktop-ble", "connectDevice cancelled (uid=$uid) -> ble.disconnect(this caller)")
+            cancelled = true
+            mainHandler.removeCallbacks(retry)
             nativeShifting.stop()
             ble.disconnect(emitter)
             emitter.onNext(OnConnectionStatus(statusNotConnected()))

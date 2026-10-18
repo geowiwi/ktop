@@ -49,6 +49,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Same key as release: debug and release builds (and GitHub
+            // releases) install over each other. A different signature
+            // forces an uninstall, which wipes Bluetooth / overlay
+            // permissions and all ktop settings (gearing, devices).
+            signingConfigs.findByName("release")?.let { signingConfig = it }
+        }
         release {
             // Signed only if a keystore is configured (local.properties / CI secrets).
             signingConfigs.findByName("release")?.let { signingConfig = it }
@@ -77,7 +84,7 @@ android {
 }
 
 dependencies {
-    implementation("io.hammerhead:karoo-ext:1.1.8")
+    implementation("io.hammerhead:karoo-ext:1.1.9")
     implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")

@@ -24,6 +24,107 @@
             app:useSimpleSummaryProvider="true"
             app:icon="@drawable/ic_battery_0" />
 
+        <SwitchPreferenceCompat
+            app:key="battery_alerts_enabled"
+            app:title="@string/text_battery_alerts"
+            app:summary="@string/text_battery_alerts_summary"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_hh_battery" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/text_overlay"
+        app:summary="@string/text_overlay_summary"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="overlay_enabled"
+            app:title="@string/text_overlay_enabled"
+            app:summary="@string/text_overlay_enabled_summary"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="overlay_duration"
+            app:title="@string/text_overlay_duration"
+            app:entries="@array/overlay_duration_entries"
+            app:entryValues="@array/overlay_duration_values"
+            app:defaultValue="3000"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="overlay_enabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="overlay_position"
+            app:title="@string/text_overlay_position"
+            app:entries="@array/overlay_position_entries"
+            app:entryValues="@array/overlay_position_values"
+            app:defaultValue="top"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="overlay_enabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="overlay_theme"
+            app:title="@string/text_overlay_theme"
+            app:entries="@array/overlay_theme_entries"
+            app:entryValues="@array/overlay_theme_values"
+            app:defaultValue="auto"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="overlay_enabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="overlay_opacity"
+            app:title="@string/text_overlay_opacity"
+            app:entries="@array/overlay_opacity_entries"
+            app:entryValues="@array/overlay_opacity_values"
+            app:defaultValue="100"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="overlay_enabled"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            app:key="overlay_test"
+            app:title="@string/text_overlay_test"
+            app:summary="@string/text_overlay_test_summary"
+            app:dependency="overlay_enabled"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/text_audio_alerts"
+        app:summary="@string/text_audio_alerts_summary"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="audio_alerts_enabled"
+            app:title="@string/text_audio_alerts_enabled"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="audio_alert_lowest_gear"
+            app:title="@string/text_audio_lowest_gear"
+            app:entries="@array/sound_entries"
+            app:entryValues="@array/sound_values"
+            app:defaultValue="off"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="audio_alerts_enabled"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            app:key="audio_alert_highest_gear"
+            app:title="@string/text_audio_highest_gear"
+            app:entries="@array/sound_entries"
+            app:entryValues="@array/sound_values"
+            app:defaultValue="off"
+            app:useSimpleSummaryProvider="true"
+            app:dependency="audio_alerts_enabled"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

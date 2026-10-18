@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gear overlay window (KtopOverlay). Layout idea from Ki2's overlay (MIT License). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:id="@+id/ktop_overlay_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_ktop_overlay_dark"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ktop_overlay_gear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="ibm-plex-sans-condensed"
+                android:includeFontPadding="false"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                tools:text="11/13" />
+
+            <TextView
+                android:id="@+id/ktop_overlay_teeth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="ibm-plex-sans-condensed"
+                android:includeFontPadding="false"
+                android:textSize="22sp"
+                tools:text="44-15 · 2.93" />
+
+            <com.valterc.ki2.views.battery.BatteryView
+                android:id="@+id/ktop_overlay_battery_view"
+                android:layout_width="12dp"
+                android:layout_height="20dp"
+                android:visibility="gone"
+                app:borderColor="@color/hh_green"
+                app:borderStrokeWidth="4"
+                app:foregroundColor="@color/hh_green"
+                app:orientation="vertical_top"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/ktop_overlay_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="ibm-plex-sans-condensed"
+                android:includeFontPadding="false"
+                android:textSize="20sp"
+                android:visibility="gone"
+                tools:text="58%"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <com.valterc.ki2.views.GearsView
+            android:id="@+id/ktop_overlay_gears"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginTop="6dp"
+            app:textEnabled="false" />
+
+    </LinearLayout>
+
+</FrameLayout>
