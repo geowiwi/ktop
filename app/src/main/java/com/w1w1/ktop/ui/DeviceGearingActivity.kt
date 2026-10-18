@@ -12,12 +12,16 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.w1w1.ktop.Cassettes
 import com.w1w1.ktop.DeviceStore
 import com.w1w1.ktop.R
 import com.w1w1.ktop.WheeltopBleClient
+import com.w1w1.ktop.WheeltopConfig
 
 /**
  * Ki2's custom gearing editor (fragments/devices/gearing, MIT License):
@@ -32,6 +36,8 @@ class DeviceGearingActivity : AppCompatActivity() {
     private val rear = mutableListOf<Int>()
     private lateinit var frontAdapter: GearAdapter
     private lateinit var rearAdapter: GearAdapter
+    private lateinit var rearSpinner: Spinner
+    private var reportedRearGears: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +52,7 @@ class DeviceGearingActivity : AppCompatActivity() {
         val connectedHere = ble.getConnectedUid()?.equals(mac, ignoreCase = true) == true
         val defaultFront = if (connectedHere && ble.hasFrontDerailleur()) 2 else 1
         val defaultRear = if (connectedHere) ble.getTotalGears() ?: 12 else 12
+        reportedRearGears = if (connectedHere) ble.getTotalGears() else null
 
         front += device.frontTeeth.ifEmpty { List(defaultFront) { 0 } }
         rear += device.rearTeeth.ifEmpty { List(defaultRear) { 0 } }
@@ -56,7 +63,11 @@ class DeviceGearingActivity : AppCompatActivity() {
         findViewById<RecyclerView>(R.id.recyclerview_device_gearing_rear).adapter = rearAdapter
 
         setupCountSpinner(findViewById(R.id.spinner_device_gearing_number_gears_front), 1..2, front, frontAdapter)
-        setupCountSpinner(findViewById(R.id.spinner_device_gearing_number_gears_rear), 1..14, rear, rearAdapter)
+        rearSpinner = findViewById(R.id.spinner_device_gearing_number_gears_rear)
+        setupCountSpinner(rearSpinner, 1..14, rear, rearAdapter)
+
+        findViewById<View>(R.id.button_device_gearing_cassette_preset).setOnClickListener { chooseCassette() }
+        findViewById<View>(R.id.button_device_gearing_cassette_list).setOnClickListener { enterCassetteList() }
 
         findViewById<ExtendedFloatingActionButton>(R.id.button_back).setOnClickListener { finish() }
     }
@@ -67,6 +78,59 @@ class DeviceGearingActivity : AppCompatActivity() {
             DeviceStore.update(this, it.copy(frontTeeth = front.toList(), rearTeeth = rear.toList()))
         }
         super.onPause()
+    }
+
+    /** Preset list (Cassettes.ALL); with a connected RD only matching cog counts first. */
+    private fun chooseCassette() {
+        val total = reportedRearGears
+        val items = Cassettes.ALL.sortedWith(
+            compareBy<Cassettes.Cassette> { if (total != null && it.speeds == total) 0 else 1 }
+                .thenBy { it.speeds }
+        )
+        AlertDialog.Builder(this)
+            .setTitle(R.string.text_cassette_preset)
+            .setItems(items.map { it.label }.toTypedArray()) { _, which -> applyRear(items[which].teeth) }
+            .setNegativeButton(R.string.text_cancel, null)
+            .show()
+    }
+
+    /** Free input for cassettes without preset (e.g. 14-speed). */
+    private fun enterCassetteList() {
+        val edit = EditText(this).apply {
+            hint = getString(R.string.text_cassette_list_hint)
+            setSingleLine()
+            val current = rear.filter { it > 0 }
+            if (current.isNotEmpty()) setText(current.sorted().joinToString("-"))
+        }
+        val pad = (20 * resources.displayMetrics.density).toInt()
+        val box = android.widget.FrameLayout(this).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(edit)
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.text_cassette_list)
+            .setMessage(R.string.text_cassette_list_message)
+            .setView(box)
+            .setPositiveButton(R.string.text_ok) { _, _ ->
+                val teeth = WheeltopConfig.parseTeeth(edit.text.toString())
+                if (teeth.size in 1..14) applyRear(teeth)
+                else Toast.makeText(this, R.string.text_cassette_list_invalid, Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton(R.string.text_cancel, null)
+            .show()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun applyRear(teeth: List<Int>) {
+        rear.clear()
+        rear.addAll(Cassettes.rearGearsFor(teeth))
+        rearAdapter.notifyDataSetChanged()
+        rearSpinner.setSelection((rear.size - 1).coerceIn(0, 13))
+        DeviceStore.get(this, mac)?.let { DeviceStore.update(this, it.copy(rearTeeth = rear.toList())) }
+        val total = reportedRearGears
+        if (total != null && total != rear.size) {
+            Toast.makeText(this, getString(R.string.text_cassette_count_mismatch, rear.size, total), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setupCountSpinner(spinner: Spinner, range: IntRange, list: MutableList<Int>, adapter: GearAdapter) {

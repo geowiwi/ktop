@@ -26,7 +26,9 @@ follow Ki2 as closely as possible.
 ## Features
 
 - Connects to the Wheeltop EDS rear derailleur over Bluetooth LE and keeps
-  the connection shared between Karoo and the app.
+  the connection shared between Karoo and the app. Reconnects
+  automatically (every 10–60 s) if the groupset was asleep at ride start
+  or the link drops.
 - Karoo data fields (same set as Ki2):
   - Text: Rear Gear, Front Gear, Gears (`01-06`), Gears T, Rear/Front
     Gear T, Gear Ratio, Shift Count, F/R Shift Count, Shifting Battery %
@@ -51,13 +53,16 @@ follow Ki2 as closely as possible.
     and right shifter), firmware versions, shifter button assignment
     (read-only)
   - **Race mode** and **sleep mode** switches
-  - Custom gearing (teeth counts) per device for Gears T / Gear Ratio
-  - Battery warning levels
+  - Custom gearing (teeth counts) per device for Gears T / Gear Ratio:
+    cassette presets (Shimano, SRAM, Campagnolo, Rotor, SUNSHINE-SZ, GOLDIX,
+    LTWOO, 10–13 speed) or
+    enter any cassette as a list (up to 14 cogs)
+  - Settings: battery levels and alerts, overlay, sounds
 - English and German (follows the Karoo language setting)
 
 ## Requirements
 
-- Hammerhead Karoo with extension support (karoo-ext 1.1.x)
+- Hammerhead Karoo with extension support (karoo-ext 1.1.9)
 - Wheeltop EDS groupset (OX, OX2, TX or GeX)
 
 ## Installation
@@ -74,13 +79,17 @@ follow Ki2 as closely as possible.
 5. In Karoo: **Sensors → + → Extensions → Wheeltop (EDS)** and add the
    groupset.
 6. Add the ktop data fields to your ride profile pages.
+7. Optional: ktop → *Settings* → **Overlay** / **Sounds**. Turning the
+   overlay on opens Android's "Display over other apps" screen for ktop.
 
 Updates: Karoo checks GitHub for new ktop releases and offers them for
 installation (pre-releases are not offered).
 
-Optional: open the device in ktop → **Gearing** and enter the chainring
-and cassette teeth (Wheeltop EDS does not report teeth counts). Needed for
-Gears T, Gear Ratio and the "Size" views.
+Optional: open the device in ktop → **Gearing**, enter the chainring and
+pick your cassette (**Choose cassette**) or type it in (**Enter as list**,
+e.g. `11-13-15-17-19-21-23-25-28-32-36-40-46`). Wheeltop EDS does not report
+teeth counts. Needed for Gears T, Gear Ratio, the "Size" views and the
+teeth in the overlay.
 
 ## FIT file
 
@@ -103,7 +112,9 @@ Gears T, Gear Ratio and the "Size" views.
 
 ## Known limitations
 
-- Teeth counts must be entered manually (see above).
+- Teeth counts must be entered manually or picked from the presets (see
+  above). No 14-speed preset yet (no verified sprocket sequence); use
+  "Enter as list".
 - Battery percentages are estimated from voltage (linear approximation).
 - Front derailleur position (2x, EDS TX) is implemented from the protocol
   documentation but not yet tested on a real 2x system.
